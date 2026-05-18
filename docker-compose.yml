@@ -1,15 +1,30 @@
 services:
   # Base de Datos
   db:
-    image: postgres:16-alpine
+    image: mariadb:10.11
     container_name: transcendence_db
     restart: always
+    healthcheck:
+      # Usamos mariadb-admin ping, que es más directo
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$${MARIADB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10      # Aumentamos a 10 para dar 50 segundos de margen
+      start_period: 30s
     environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: root_password_42
+      # Por si acaso, mantenemos las de MySQL también
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root_password_42 
+    ports:
+      - "3306:3306"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/mysql
     networks:
       - transcendence_net
 
@@ -22,9 +37,12 @@ services:
     volumes:
       - ./backend:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - transcendence_net
+    ports:
+      - "8000:8000"
 
   # Frontend (Angular)
   frontend:
@@ -56,6 +74,23 @@ services:
       - frontend
     networks:
       - transcendence_net
+  
+  phpmyadmin:
+      image: phpmyadmin:latest
+      container_name: transcendence_phpmyadmin
+      restart: always
+      ports:
+        - "8081:80"
+      environment:
+        # Corregido a formato de lista para evitar errores
+        - PMA_HOST=db
+        - PMA_PORT=3306
+        - MYSQL_ROOT_PASSWORD=root_password_42
+      networks:
+        - transcendence_net
+      depends_on:
+        - db
+  
 
 networks:
   transcendence_net:

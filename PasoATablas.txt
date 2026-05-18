@@ -1,0 +1,30 @@
+TRANSCENDENCE
+
+USERS: (id_user, name, email, password, nick, registrationDate, points)
+PK: {id_user}
+
+GAME: (id_game, name)
+PK: {id_game}
+
+STATISTICS: (id_statitistic, id_user, id_game, wins, losses)
+PK: {id_statitistic}
+FK: {id_user} → USERS{id_user}
+FK: {id_game} → GAME{id_game}
+
+CHANNEL: (id_channel, name)
+PK: {id_channel}
+
+MESSAGE: (id_message, id_user, id_channel, Content, SentDate)
+PK: {id_message}
+FK: {id_user} → USERS{id_user}
+FK: {id_channel} → CHANNEL{id_channel}
+
+MATCH: (id_match, id_game, id_winner, init_date, end_date)
+PK: {id_match}
+FK: {id_game} → GAME{id_game}
+FK: {id_winner} → USERS{id_user}
+
+MATCH_USER: (id_match_user, id_match, id_user, points, date)
+PK: {id_match_user}
+FK: {id_match} → MATCH{id_match}
+FK: {id_user} → USERS{id_user}

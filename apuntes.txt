@@ -1,0 +1,30 @@
+Entrar a la base de datos:
+http://localhost:8081
+Usuario -> root
+Contraseña -> root_password_42
+Base de datos -> transcendence
+
+Entrar al proyecto:
+http://localhost:4200/
+
+
+Levantar todo:
+make
+
+Hacer un rebuild:
+make re
+
+Limpiar todo:
+make clean
+
+Endpoints que crear:
+    Obtener juegos ✅
+    Iniciar sesion
+    Crear Usuario ✅
+    Enviar codigo recuperacion de Contraseña
+    Update password
+    Obtener Usuario ✅
+    Obtener Todos los Usuarios ✅
+    Obtener Wins/Losses de cada juego de un usuario ✅
+    Obtener Wins/Losses totales de un jugador ✅
+    Modificar name y nickname ✅
