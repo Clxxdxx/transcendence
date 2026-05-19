@@ -19,10 +19,9 @@ make clean
 
 Endpoints que crear:
     Obtener juegos ✅
-    Iniciar sesion
+    Iniciar sesion ✅
     Crear Usuario ✅
-    Enviar codigo recuperacion de Contraseña
-    Update password
+    Update password ✅
     Obtener Usuario ✅
     Obtener Todos los Usuarios ✅
     Obtener Wins/Losses de cada juego de un usuario ✅
