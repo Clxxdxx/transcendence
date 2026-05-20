@@ -27,3 +27,5 @@ Endpoints que crear:
     Obtener Wins/Losses de cada juego de un usuario ✅
     Obtener Wins/Losses totales de un jugador ✅
     Modificar name y nickname ✅
+    Eliminar cuenta
+    Cerrar sesion

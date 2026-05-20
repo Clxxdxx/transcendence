@@ -10,8 +10,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-//Login
-Route::post('/login', [AuthController::class, 'login']);
+//Login y logout
+Route::post('/login', [AuthController::class, 'login']); //http://localhost:8080/api/login?email=Claudio@gmail.com&password=123456
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); //http://localhost:8080/api/logout
 
 //Users
 Route::post('/users', [UserController::class, 'store']); //http://localhost:8080/api/users
@@ -21,6 +22,7 @@ Route::put('/users/{id}/password', [UserController::class, 'updatePassword']); /
 Route::get('/users/{id_user}', [UserController::class, 'show']); //http://localhost:8080/api/users/2
 Route::get('/users/{id_user}/stats', [UserController::class, 'getWinsLossesEachGame']); //http://localhost:8080/api/users/1/stats
 Route::get('/users/{id}/stats/totals', [UserController::class, 'getTotalWinsLosses']); //http://localhost:8080/api/users/9/stats/totals
+Route::delete('/users/{id}', [UserController::class, 'destroy']); //http://localhost:8080/api/users/25
 
 //Games
 Route::get('/games', [GameController::class, 'index']); //http://localhost:8080/api/games/

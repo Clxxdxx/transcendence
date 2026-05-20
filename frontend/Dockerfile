@@ -2,15 +2,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copiamos solo los archivos de dependencias primero (optimiza el cache)
+# Copiamos dependencias
 COPY package*.json ./
-RUN npm install
+
+# Limpiamos instalaciones viejas para que no arrastre el error de caché
+RUN npm ci || npm install
+
+# Instalamos explícitamente el plugin oficial que te exige el log de error
+RUN npm install -D @tailwindcss/postcss tailwindcss
 
 # Copiamos el resto del código
 COPY . .
 
-# Exponemos el puerto de Angular
 EXPOSE 4200
 
-# Comando para arrancar en modo desarrollo
 CMD ["npx", "ng", "serve", "--host", "0.0.0.0"]

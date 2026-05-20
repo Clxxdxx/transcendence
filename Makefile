@@ -27,9 +27,6 @@ clean:
 	docker-compose $(ENV_FILE) down -v --remove-orphans || true
 	docker network prune -f || true
 
-# Rebuild completo desde cero
-re: clean up migrate
-
 # Ejecuta las migraciones
 migrate:
 	@echo "$(YELLOW)Esperando un momento para asegurar la conexión...$(RESET)"
@@ -59,4 +56,4 @@ shell-front:
 ps:
 	docker-compose $(ENV_FILE) ps
 
-.PHONY: all up down clean re migrate install logs shell-back shell-front ps
+.PHONY: all up down clean migrate install logs shell-back shell-front ps
