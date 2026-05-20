@@ -12,11 +12,6 @@ services:
       retries: 10      # Aumentamos a 10 para dar 50 segundos de margen
       start_period: 30s
     environment:
-      MARIADB_DATABASE: ${DB_DATABASE}
-      MARIADB_USER: ${DB_USERNAME}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: root_password_42
-      # Por si acaso, mantenemos las de MySQL también
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
