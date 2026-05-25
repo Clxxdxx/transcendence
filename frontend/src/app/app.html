@@ -1,19 +1,30 @@
-<app-navbar></app-navbar>
+<app-navbar 
+  [isLoggedIn]="isLoggedIn" 
+  [userInitial]="userInitial"
+  (loginClicked)="isLoginModalOpen = true"
+  (logout)="onLogout()">
+</app-navbar>
 
-<main>
-  <div class="min-h-screen text-white p-[3vw]">
-    
-    <h2 class="text-2xl font-semibold mb-8 ml-[1vw] text-cyan-200 tracking-wide px-[4vw]">
-      Featured Games
-    </h2>
+<main> 
+    <div class="px-[8vw] py-10">
+  
+      <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
+        Featured Games
+      </h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[4vw] justify-items-center px-[4vw]">
-      @for (game of games; track game.title) {
-        <app-game-card 
-          [title]="game.title" 
-          [svgPath]="game.svg">
-        </app-game-card>
-      }
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2vw]">
+        @for (game of games; track game.title) {
+          <app-game-card 
+            [title]="game.title" 
+            [svgPath]="game.svg">
+          </app-game-card>
+        }
+      </div>
     </div>
-  </div>
 </main>
+
+<app-footer></app-footer>
+
+@if (isLoginModalOpen) {
+  <app-auth-modal (close)="isLoginModalOpen = false" (loginSuccess)="onLoginSuccess($event)"></app-auth-modal>
+}
