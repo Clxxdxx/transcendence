@@ -2,6 +2,7 @@
   [isLoggedIn]="isLoggedIn" 
   [userInitial]="userInitial"
   (loginClicked)="isLoginModalOpen = true"
+  (signUpClicked)="isSignUpModalOpen = true"
   (logout)="onLogout()">
 </app-navbar>
 
@@ -26,5 +27,33 @@
 <app-footer></app-footer>
 
 @if (isLoginModalOpen) {
-  <app-auth-modal (close)="isLoginModalOpen = false" (loginSuccess)="onLoginSuccess($event)"></app-auth-modal>
+  <app-auth-modal 
+    (close)="isLoginModalOpen = false" 
+    (loginSuccess)="onLoginSuccess($event)"
+    (toSignUp)="toSignUp()"
+    (forgotPassClicked)="toSendCodeModal()">
+  </app-auth-modal>
+}
+
+@if (isSignUpModalOpen) {
+  <app-sign-up-modal 
+    (close)="isSignUpModalOpen = false" 
+    (signUpSuccess)="onSignUpSuccess()"
+    (toSignUp)="toSignUp()">
+  </app-sign-up-modal>
+}
+
+@if (isSendCodeModalOpen) {
+  <app-send-code-modal
+    (close)="isSendCodeModalOpen = false"
+    (toBack) = "onBack()"
+    (toSendCode) = "toChangePass()">
+  </app-send-code-modal> 
+}
+
+@if (isChangePassModalOpen) {
+  <app-change-pass-modal
+    (close)="isChangePassModalOpen = false"
+    (toBack)="onBackToCode()">
+  </app-change-pass-modal>
 }

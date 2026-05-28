@@ -9,6 +9,8 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 })
 export class Navbar {
     @Output() loginClicked = new EventEmitter<void>();
+    @Output() signUpClicked = new EventEmitter<void>();
+    @Output() sendCodeClicked = new EventEmitter<void>();
     @Output() logout = new EventEmitter<void>();
     
     @Input() isLoggedIn: boolean = false;

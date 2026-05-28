@@ -18,11 +18,11 @@
         <span class="text-cyan-200 text-xs font-normal font-['Inter']">Log in</span>
       </button>
 
-      <button class="w-24 h-8 flex items-center justify-center rounded-[10px] bg-gradient-to-l from-blue-900 to-sky-400 border border-blue-600 hover:brightness-125 transition-all duration-300 shadow-[0_0_10px_rgba(56,189,248,0.3)]">
+      <button (click)="signUpClicked.emit()" class="w-24 h-8 flex items-center justify-center rounded-[10px] bg-gradient-to-l from-blue-900 to-sky-400 border border-blue-600 hover:brightness-125 transition-all duration-300 shadow-[0_0_10px_rgba(56,189,248,0.3)]">
         <span class="text-cyan-200 text-xs font-normal font-['Inter']">Sign up</span>
       </button>
     } @else {
-      <button (click)="logout.emit()" class="text-cyan-200 text-xs">Logout</button>
+      <button (click)="logout.emit()" class="text-cyan-200 text-xs mr-[3vh]">Logout</button>
       <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold">
         {{ userInitial }}
       </div>

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MailController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -26,3 +27,7 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']); //http://local
 
 //Games
 Route::get('/games', [GameController::class, 'index']); //http://localhost:8080/api/games/
+
+//Mail
+Route::post('/send-recovery-code', [MailController::class, 'sendRecoveryCode']); //http://localhost:8080/api/send-recovery-code?email=c@gmail.com
+Route::post('/verify-code', [MailController::class, 'verifyCode']);
