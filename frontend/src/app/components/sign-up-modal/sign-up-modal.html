@@ -1,0 +1,38 @@
+<div (click)="onClose()" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+  <div (click)="$event.stopPropagation()" class="bg-[#1A1F4A] border border-[#00C7C4] w-full max-w-md p-8 rounded-3xl shadow-[0_0_50px_rgba(56,189,248,0.2)]">
+    
+    <h2 class="text-3xl font-bold text-cyan-200 mb-6 text-center">Sign up</h2>
+
+    <div (submit)="doSignUp()" class="flex flex-col gap-4">
+      @if (errorMessage) {
+        <div class="text-red-500 text-sm mb-4 text-center font-bold">
+          {{ errorMessage }}
+        </div>
+      }
+      <label class="text-sm text-cyan-200">Name</label>
+      <input type="text" [(ngModel)]="name" name="name" placeholder="Umar Sadiq" required
+             class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+
+      <label class="text-sm text-cyan-200">Nick</label>
+      <input type="text" [(ngModel)]="nick" name="nick" placeholder="UmarGuisanteSadiq" required
+             class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+
+      <label class="text-sm text-cyan-200">Email</label>
+      <input type="email" [(ngModel)]="email" name="email" placeholder="umarsadiq@gmail.com" required
+             class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+
+      <label class="text-sm text-cyan-200">Password</label>
+      <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required
+             class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+
+      <button type="submit" 
+              class="w-full py-3 mt-4 rounded-xl bg-gradient-to-l from-blue-900 to-sky-400 text-cyan-200 font-semibold hover:brightness-125 transition-all">
+        Sign up
+      </button>
+      
+      <p class="text-sm text-center text-slate-400">
+       You have account? <span (click)="onSwitchToLogin()" class="text-cyan-400 cursor-pointer hover:underline">Log in</span>
+      </p>
+    </div>
+  </div>
+</div>

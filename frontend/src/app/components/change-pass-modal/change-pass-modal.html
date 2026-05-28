@@ -1,0 +1,30 @@
+<div (click)="onClose()" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+  <div (click)="$event.stopPropagation()" class="bg-[#1A1F4A] border border-[#00C7C4] w-full max-w-md p-8 rounded-3xl shadow-[0_0_50px_rgba(56,189,248,0.2)]">
+    
+    <h2 class="text-3xl font-bold text-cyan-200 mb-6 text-center">Change Pass</h2>
+
+    <form class="flex flex-col gap-4">
+
+        <label class="text-sm text-cyan-200">Code</label>
+        <input type="text" placeholder="123456" required
+                class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+        
+        <label class="text-sm text-cyan-200">New password</label>
+        <input type="password" placeholder="••••••••" required
+                class="w-full bg-[#0d0f26] border border-blue-500/30 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-400">
+
+        <div class="flex gap-4 mt-4">
+            <button type="button" (click)="onBack()"
+                    class="flex-1 py-3 rounded-xl border border-blue-500 text-blue-400 font-semibold hover:bg-blue-500/10 transition-all">
+                Back
+            </button>
+
+            <button type="submit" 
+                    class="flex-1 py-3 rounded-xl bg-gradient-to-l from-blue-900 to-sky-400 text-cyan-200 font-semibold hover:brightness-125 transition-all">
+                Confirm
+            </button>
+        </div>
+      
+      </form>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
 
@@ -12,31 +12,50 @@ import { Auth } from '../../services/auth';
 export class AuthModal {
   @Output() close = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<string>();
+  @Output() toSignUp= new EventEmitter<string>();
+  @Output() forgotPassClicked = new EventEmitter<void>();
 
   email = '';
   password = '';
   errorMessage = '';
 
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private cdr: ChangeDetectorRef) {}
 
   doLogin() {
-    console.log('Intentando loguear con:', this.email); // Debug
+    console.log('Intentando loguear con:', this.email);
 
     this.auth.login(this.email, this.password).subscribe({
       next: (res: any) => {
         console.log('¡Éxito! Respuesta del servidor:', res);
-        alert('Usuario logueado correctamente'); // Feedback visual rápido
+        this.auth.setToken(res.access_token);
+        this.auth.setEmail(res.user.email)
         this.loginSuccess.emit(this.email); 
         this.close.emit();
       },
       error: (err: any) => {
-        console.error('Error en el login:', err);
-        this.errorMessage = 'Credenciales incorrectas o fallo en el servidor';
-        alert('Error' + this.errorMessage);
+        if (err.status === 422 && err.error.errors) {
+          const errors = err.error.errors;
+          
+          const firstKey = Object.keys(errors)[0];
+          this.errorMessage = errors[firstKey][0]; 
+        } else {
+          this.errorMessage = 'Invalid password';
+        }
+        this.cdr.detectChanges();
       }
     });
   }
 
+  onSignUp() {
+    this.toSignUp.emit();
+    this.close.emit();
+  }
+
+  onForgotPass(){
+    this.forgotPassClicked.emit();
+    console.log("CCCCCCCCCCCCC");
+    this.close.emit();
+  }
 
   onClose() {
     this.close.emit();

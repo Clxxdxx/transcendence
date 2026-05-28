@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class Auth {
   private apiUrl = 'http://localhost:8080/api';
+  private tokenKey = 'auth_token';
+  private email = 'email';
 
   constructor(private http: HttpClient){}
 
@@ -17,4 +19,30 @@ export class Auth {
       { headers }
     );
   }
+
+  setToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  setEmail(mail: string): void {
+    localStorage.setItem(this.email, mail);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  getEmail(): string | null {
+    return localStorage.getItem(this.email);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.email);
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
 }

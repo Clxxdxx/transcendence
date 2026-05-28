@@ -11,9 +11,6 @@ http://localhost:4200/
 Levantar todo:
 make
 
-Hacer un rebuild:
-make re
-
 Limpiar todo:
 make clean
 
