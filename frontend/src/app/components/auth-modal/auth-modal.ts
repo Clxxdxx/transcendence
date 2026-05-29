@@ -28,7 +28,8 @@ export class AuthModal {
       next: (res: any) => {
         console.log('¡Éxito! Respuesta del servidor:', res);
         this.auth.setToken(res.access_token);
-        this.auth.setEmail(res.user.email)
+        this.auth.setEmail(res.user.email);
+        this.auth.setId(res.user.id_user);
         this.loginSuccess.emit(this.email); 
         this.close.emit();
       },

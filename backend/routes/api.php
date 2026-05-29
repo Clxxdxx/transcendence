@@ -24,6 +24,7 @@ Route::get('/users/{id_user}', [UserController::class, 'show']); //http://localh
 Route::get('/users/{id_user}/stats', [UserController::class, 'getWinsLossesEachGame']); //http://localhost:8080/api/users/1/stats
 Route::get('/users/{id}/stats/totals', [UserController::class, 'getTotalWinsLosses']); //http://localhost:8080/api/users/9/stats/totals
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //http://localhost:8080/api/users/25
+Route::get('/users/by-email/{email}', [UserController::class, 'getIdByEmail']);
 
 //Games
 Route::get('/games', [GameController::class, 'index']); //http://localhost:8080/api/games/

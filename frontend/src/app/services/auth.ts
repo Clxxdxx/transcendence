@@ -9,6 +9,7 @@ export class Auth {
   private apiUrl = 'http://localhost:8080/api';
   private tokenKey = 'auth_token';
   private email = 'email';
+  private id = 'id_user';
 
   constructor(private http: HttpClient){}
 
@@ -26,6 +27,11 @@ export class Auth {
 
   setEmail(mail: string): void {
     localStorage.setItem(this.email, mail);
+    
+  }
+
+  setId(id_user: string): void {
+    localStorage.setItem(this.id, id_user)
   }
 
   getToken(): string | null {
@@ -36,9 +42,14 @@ export class Auth {
     return localStorage.getItem(this.email);
   }
 
+  getId(): string | null {
+    return localStorage.getItem(this.id);
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.email);
+    localStorage.removeItem(this.id);
   }
 
   isLoggedIn(): boolean {
