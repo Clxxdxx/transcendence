@@ -18,7 +18,7 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-s
 COPY . .
 
 # Ajuste de permisos (importante para Laravel)
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 9000
 

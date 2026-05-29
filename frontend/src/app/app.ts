@@ -33,6 +33,7 @@ export class App implements OnInit{
     isSignUpModalOpen = false;
     isSendCodeModalOpen = false;
     isChangePassModalOpen = false;
+    emailParaCambiar: string = '';
     isLoggedIn = false;
     userInitial = '';
 
@@ -66,9 +67,14 @@ export class App implements OnInit{
       this.isLoginModalOpen = false;
     }
 
-    toChangePass(){
+    toChangePass(emailRecibido: string) {
+      this.emailParaCambiar = emailRecibido;
       this.isSendCodeModalOpen = false;
       this.isChangePassModalOpen = true;
+    }
+
+    onConfirmPass(){
+      this.isChangePassModalOpen = false;
     }
 
     onBackToCode() {

@@ -17,7 +17,8 @@
         @for (game of games; track game.title) {
           <app-game-card 
             [title]="game.title" 
-            [svgPath]="game.svg">
+            [svgPath]="game.svg"
+            (loginRequired)="isLoginModalOpen = true">
           </app-game-card>
         }
       </div>
@@ -47,12 +48,13 @@
   <app-send-code-modal
     (close)="isSendCodeModalOpen = false"
     (toBack) = "onBack()"
-    (toSendCode) = "toChangePass()">
+    (toSendCode) = "toChangePass($event)">
   </app-send-code-modal> 
 }
 
 @if (isChangePassModalOpen) {
   <app-change-pass-modal
+    [email]="emailParaCambiar"
     (close)="isChangePassModalOpen = false"
     (toBack)="onBackToCode()">
   </app-change-pass-modal>

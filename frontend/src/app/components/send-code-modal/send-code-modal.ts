@@ -12,7 +12,7 @@ import { Email } from '../../services/email';
 export class SendCodeModal {
   @Output() close = new EventEmitter<void>();
   @Output() toBack = new EventEmitter<void>();
-  @Output() toSendCode = new EventEmitter<void>();
+  @Output() toSendCode = new EventEmitter<string>();
   errorMessage = '';
   email = '';
 
@@ -32,7 +32,7 @@ export class SendCodeModal {
 
     this.c_email.sendCode(this.email).subscribe({
       next: (res: any) => {
-        this.toSendCode.emit();
+        this.toSendCode.emit(this.email);
         alert("Code sent succesfully!");
       },
       error: (err: any) => {

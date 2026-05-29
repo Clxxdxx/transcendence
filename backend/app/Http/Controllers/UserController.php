@@ -124,20 +124,29 @@ class UserController extends Controller
     }
 
     public function updatePassword(Request $request, string $id)
-{
-    $user = User::findOrFail($id);
+    {
+        $user = User::findOrFail($id);
 
-    $validated = $request->validate([
-        'password' => 'required|string|min:6',
-    ]);
+        $validated = $request->validate([
+            'password' => 'required|string|min:6',
+        ]);
 
-    $user->update([
-        'password' => Hash::make($validated['password'])
-    ]);
+        $user->update([
+            'password' => Hash::make($validated['password'])
+        ]);
 
-    return response()->json([
-        'message' => "Password updated successfully"
-    ], 200);
-}
+        return response()->json([
+            'message' => "Password updated successfully"
+        ], 200);
+    }
+
+    public function getIdByEmail($email)
+    {
+        $user = User::where('email', $email)->firstOrFail();
+
+        return response()->json([
+            'id_user' => $user->id_user
+        ], 200);
+    }
 
 }

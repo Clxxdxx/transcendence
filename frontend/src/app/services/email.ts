@@ -14,4 +14,10 @@ export class Email {
     const headers = new HttpHeaders({ 'Content-type': 'application/json'});
     return this.http.post(`${this.apiUrl}/send-recovery-code`, { email }, { headers })
   }
+
+  verifyCode(email: string, code: string): Observable<any>{
+    const headers = new HttpHeaders({ 'Content-type': 'application/json'});
+    return this.http.post(`${this.apiUrl}/verify-code`, { email, code }, { headers })
+  } 
+
 }
