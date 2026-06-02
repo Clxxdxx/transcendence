@@ -7,13 +7,17 @@ import { SignUpModal } from './components/sign-up-modal/sign-up-modal';
 import { SendCodeModal } from './components/send-code-modal/send-code-modal';
 import { ChangePassModal } from './components/change-pass-modal/change-pass-modal';
 import { Footer } from './components/footer/footer';
+import { TermsModal } from './components/terms-modal/terms-modal';
 import { Auth } from './services/auth';
+import { Leaderboard } from './components/leaderboard/leaderboard';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer, 
-    SignUpModal, SendCodeModal, ChangePassModal],
+    SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
+    Leaderboard],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -33,9 +37,11 @@ export class App implements OnInit{
     isSignUpModalOpen = false;
     isSendCodeModalOpen = false;
     isChangePassModalOpen = false;
+    isTermsModalOpen = false;
     emailParaCambiar: string = '';
     isLoggedIn = false;
     userInitial = '';
+    currentView: string = 'games';
 
     ngOnInit(){
       this.isLoggedIn = this.auth.isLoggedIn();
@@ -90,5 +96,6 @@ export class App implements OnInit{
     onLogout(){
       this.auth.logout();
       this.isLoggedIn = false;
+      this.currentView = 'games';
     }
 }

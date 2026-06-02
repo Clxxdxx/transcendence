@@ -25,20 +25,17 @@ export class ChangePassModal {
   onConfirm() {
     this.errorMessage = '';
     console.log("Enviando a verificar -> Email:", this.email, "Código:", this.code);
-    // Paso 1: Verificar si el código es correcto
     this.c_email.verifyCode(this.email, this.code).subscribe({
       next: () => {
         
-        // Paso 2: El código es correcto, ahora buscamos el ID mediante el email
         this.userService.getIdByEmail(this.email).subscribe({
           next: (res: any) => {
-            const userId = res.id_user; // ¡Ya tenemos el ID de forma segura!
+            const userId = res.id_user;
 
-            // Paso 3: Cambiamos la contraseña usando el ID obtenido
             this.userService.updatePassword(userId, this.newPassword).subscribe({
               next: () => {
                 alert("Contraseña actualizada con éxito. Ya puedes iniciar sesión.");
-                this.close.emit(); // Cerramos el modal
+                this.close.emit();
               },
               error: () => {
                 this.errorMessage = "No se pudo guardar la nueva contraseña.";
@@ -46,7 +43,6 @@ export class ChangePassModal {
             });
           },
           error: (err: any) => {
-            // Si Laravel devuelve 404 porque el correo no existe
             this.errorMessage = "El correo electrónico no está registrado.";
           }
         });

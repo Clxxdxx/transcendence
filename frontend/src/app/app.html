@@ -1,18 +1,19 @@
 <app-navbar 
   [isLoggedIn]="isLoggedIn" 
   [userInitial]="userInitial"
+  (loginRequired)="isLoginModalOpen = true"
   (loginClicked)="isLoginModalOpen = true"
   (signUpClicked)="isSignUpModalOpen = true"
+  (viewChanged)="currentView = $event"
   (logout)="onLogout()">
 </app-navbar>
 
 <main> 
+    @if (currentView === 'games') {
     <div class="px-[8vw] py-10">
-  
       <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
         Featured Games
       </h2>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2vw]">
         @for (game of games; track game.title) {
           <app-game-card 
@@ -23,9 +24,29 @@
         }
       </div>
     </div>
+  }
+
+  @if (currentView === 'leaderboard') {
+    <div class="px-[8vw] py-10">
+      <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
+        Leaderboard
+      </h2>
+      <app-leaderboard></app-leaderboard>
+    </div>
+  }
+
+  @if (currentView === 'profile') {
+    <div class="px-[8vw] py-10 text-center">
+      <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
+        Profile
+      </h2>
+      <h2 class="text-2xl text-cyan-200 font-bold">User Profile Component</h2>
+      <p class="text-slate-400 mt-2">Próximamente...</p>
+    </div>
+  }
 </main>
 
-<app-footer></app-footer>
+<app-footer (termsClicked)="isTermsModalOpen = true"></app-footer>
 
 @if (isLoginModalOpen) {
   <app-auth-modal 
@@ -58,4 +79,8 @@
     (close)="isChangePassModalOpen = false"
     (toBack)="onBackToCode()">
   </app-change-pass-modal>
+}
+
+@if (isTermsModalOpen) {
+  <app-terms-modal (close)="isTermsModalOpen = false"></app-terms-modal>
 }

@@ -1,4 +1,6 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Auth } from '../../services/auth';
+
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +14,34 @@ export class Navbar {
     @Output() signUpClicked = new EventEmitter<void>();
     @Output() sendCodeClicked = new EventEmitter<void>();
     @Output() logout = new EventEmitter<void>();
+    @Output() loginRequired = new EventEmitter<void>();
+    @Output() viewChanged = new EventEmitter<string>();
+
+    constructor(private auth: Auth) {}
     
     @Input() isLoggedIn: boolean = false;
     @Input() userInitial: string = '';
+
+    onGames() {
+      this.viewChanged.emit('games');
+    }
+
+    onLeaderboard() {
+      if (!this.auth.isLoggedIn()) {
+        console.log('Usuario no logueado. Solicitando inicio de sesión...');
+        this.loginRequired.emit();
+        return;
+      }
+      this.viewChanged.emit('leaderboard');
+    }
+
+    onProfile() {
+      if (!this.auth.isLoggedIn()) {
+        console.log('Usuario no logueado. Solicitando inicio de sesión...');
+        this.loginRequired.emit();
+        return;
+      }
+      this.viewChanged.emit('profile');
+    }
+
 }
