@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
@@ -7,4 +7,7 @@ import { Component, Output } from '@angular/core';
   styleUrl: './footer.css',
   standalone: true
 })
-export class Footer {}
+export class Footer {
+  @Output() termsClicked = new EventEmitter<void>();
+
+}

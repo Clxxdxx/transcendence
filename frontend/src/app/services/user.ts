@@ -22,4 +22,14 @@ export class User {
           params: { password: newPassword }
       });
   }
+
+  getLeaderboard(): Observable<any[]> {
+    const token = localStorage.getItem('auth_token'); 
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<any[]>(`${this.apiUrl}/users/leaderboard`, { headers });
+  }
 }

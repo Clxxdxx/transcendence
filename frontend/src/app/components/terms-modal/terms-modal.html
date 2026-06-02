@@ -1,0 +1,25 @@
+<div (click)="onClose()" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+  <div (click)="$event.stopPropagation()" class="bg-[#1A1F4A] border border-[#00C7C4] w-full max-w-lg p-8 rounded-3xl shadow-[0_0_50px_rgba(56,189,248,0.25)] flex flex-col max-h-[80vh]">
+    
+    <h2 class="text-3xl font-bold text-cyan-200 mb-4 text-center tracking-wide">Terms & Conditions</h2>
+
+    <div class="overflow-y-auto pr-2 my-4 text-slate-300 text-sm leading-relaxed flex-1 space-y-4">
+      <p class="font-semibold text-cyan-400">1. Acceptance of Terms</p>
+      <p>Welcome to Transcendence. By accessing or using our platform and playing our featured games, you agree to be bound by these Terms of Service and our Privacy Policy.</p>
+      
+      <p class="font-semibold text-cyan-400">2. Ranked Matches & Fair Play</p>
+      <p>Cheating, using automated bots, or exploiting software bugs in any online ranked game (including Tic-Tac-Toe, Pong, or Connect 4) will result in immediate and permanent account suspension.</p>
+      
+      <p class="font-semibold text-cyan-400">3. Privacy Policy Summary</p>
+      <p>We securely store your encrypted password, username, and gaming stats. We do not share your personal email or statistics data with third-party companies.</p>
+    </div>
+
+    <div class="mt-4">
+      <button type="button" (click)="onClose()" 
+              class="w-full py-3 rounded-xl bg-gradient-to-l from-blue-900 to-sky-400 text-cyan-200 font-semibold hover:brightness-125 transition-all cursor-pointer">
+        I Accept & Close
+      </button>
+    </div>
+    
+  </div>
+</div>

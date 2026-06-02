@@ -149,4 +149,46 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function getLeaderboard(Request $request)
+    {
+        $topUsers = User::orderBy('points', 'desc')
+            ->select('id_user', 'nick', 'points')
+            ->take(50)
+            ->get();
+
+        $leaderboard = $topUsers->map(function ($user, $index) {
+            return [
+                'pos' => $index + 1,
+                'nick' => $user->nick,
+                'points' => $user->points,
+                'is_current' => false
+            ];
+        })->toArray();
+
+        $currentUser = $request->user(); 
+
+        if ($currentUser) {
+            $inTop50 = false;
+            
+            foreach ($leaderboard as &$row) {
+                if ($row['nick'] === $currentUser->nick) {
+                    $row['is_current'] = true;
+                    $inTop50 = true;
+                    break;
+                }
+            }
+
+            if (!$inTop50 && count($leaderboard) === 50) {
+                $leaderboard[49] = [
+                    'pos' => '50+',
+                    'nick' => $currentUser->nick,
+                    'points' => $currentUser->points,
+                    'is_current' => true
+                ];
+            }
+        }
+
+        return response()->json($leaderboard, 200);
+    }
+
 }

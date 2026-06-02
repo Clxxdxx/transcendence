@@ -1,1 +1,9 @@
-<a href="#" class="text-xs text-cyan-400 hover:underline self-start">© Privacy Policy | Terms of Service </a>
+<footer class="w-full mt- px-[8vw] pb-8">
+  <div class="border-t border-blue-500/20 pt-6 flex justify-center items-center">
+    <button 
+      (click)="termsClicked.emit()" 
+      class="text-sm text-cyan-400/60 font-medium hover:text-cyan-300 transition-colors bg-transparent border-none cursor-pointer tracking-wide">
+      © Privacy Policy | Terms of Service
+    </button>
+  </div>
+</footer>

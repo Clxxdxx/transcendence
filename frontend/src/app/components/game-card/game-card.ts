@@ -15,7 +15,7 @@ export class GameCard {
   @Input() svgPath: string = '';
   @Output() loginRequired = new EventEmitter<void>();
 
-    constructor(private auth: Auth) {}
+  constructor(private auth: Auth) {}
 
   playVsAi() {
     console.log('Click en ${this.title} modo ia');

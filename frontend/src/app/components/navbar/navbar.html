@@ -6,9 +6,9 @@
     </div>
 
     <div class="hidden md:flex items-center space-x-[3vw] text-slate-300">
-      <a href="#" class="hover:text-white transition-colors text-cyan-200">Games</a>
-      <a href="#" class="hover:text-white transition-colors text-cyan-200">Leaderboard</a>
-      <a href="#" class="hover:text-white transition-colors text-cyan-200">Profile</a>
+      <a href="#" (click)="$event.preventDefault(); onGames()" class="hover:text-white transition-colors text-cyan-200">Games</a>
+      <a href="#" (click)="$event.preventDefault(); onLeaderboard()" class="hover:text-white transition-colors text-cyan-200">Leaderboard</a>
+      <a href="#" (click)="$event.preventDefault(); onProfile()" class="hover:text-white transition-colors text-cyan-200">Profile</a>
     </div>
   </div>
 

@@ -11,6 +11,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+//Lederboard
+Route::get('/users/leaderboard', [UserController::class, 'getLeaderboard'])->middleware('auth:sanctum'); //http://localhost:8080/api/users/leaderboard
+
 //Login y logout
 Route::post('/login', [AuthController::class, 'login']); //http://localhost:8080/api/login?email=Claudio@gmail.com&password=123456
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); //http://localhost:8080/api/logout
@@ -31,4 +34,4 @@ Route::get('/games', [GameController::class, 'index']); //http://localhost:8080/
 
 //Mail
 Route::post('/send-recovery-code', [MailController::class, 'sendRecoveryCode']); //http://localhost:8080/api/send-recovery-code?email=c@gmail.com
-Route::post('/verify-code', [MailController::class, 'verifyCode']);
+Route::post('/verify-code', [MailController::class, 'verifyCode']); //http://localhost:8080/api/verify-code?email=claudiojaloara@gmail.com&code=592345
