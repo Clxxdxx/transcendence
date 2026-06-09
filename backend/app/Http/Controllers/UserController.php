@@ -102,7 +102,6 @@ class UserController extends Controller
             ->with('game:id_game,name') //solo el id y el nombre
             ->get()
             ->map(function ($stat) {
-                //Mapear el resultado
                 return [
                     'GameName' => $stat->game->name,
                     'Wins' => $stat->wins,

@@ -9,6 +9,12 @@ export class User {
   private apiUrl = 'http://localhost:8080/api';
   constructor(private http: HttpClient){}
 
+  getAuthUser(): Observable<any> {
+    const token = localStorage.getItem('auth_token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.get(`${this.apiUrl}/user`, { headers });
+  }
+
   getUser(id: number): Observable<any>{
     return this.http.get(`${this.apiUrl}/users/${id}`)
   }
@@ -32,4 +38,25 @@ export class User {
 
     return this.http.get<any[]>(`${this.apiUrl}/users/leaderboard`, { headers });
   }
+
+  updateProfile(id: number, data: { name: string, nick: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${id}`, data);
+  }
+
+  deleteAccount(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}`);
+  }
+
+  getGameStats(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/${id}/stats`);
+  }
+
+  getTotalStats(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users/${id}/stats/totals`);
+  }
+
+  getAllGames(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/games`);
 }
+}
+

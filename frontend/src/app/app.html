@@ -36,12 +36,11 @@
   }
 
   @if (currentView === 'profile') {
-    <div class="px-[8vw] py-10 text-center">
+    <div class="px-[8vw] py-10">
       <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
         Profile
       </h2>
-      <h2 class="text-2xl text-cyan-200 font-bold">User Profile Component</h2>
-      <p class="text-slate-400 mt-2">Próximamente...</p>
+      <app-profile></app-profile>
     </div>
   }
 </main>
@@ -83,4 +82,15 @@
 
 @if (isTermsModalOpen) {
   <app-terms-modal (close)="isTermsModalOpen = false"></app-terms-modal>
+}
+
+@if (isWinModalOpen) {
+  <app-win-modal (close)="isWinModalOpen = false"></app-win-modal>
+}
+@if (isLossModalOpen) {
+  <app-loss-modal (close)="isLossModalOpen = false"></app-loss-modal>
+}
+
+@if (isDrawModalOpen) {
+  <app-draw-modal (close)="isDrawModalOpen = false"></app-draw-modal>
 }
