@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         //Crear mensajes
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             \App\Models\Message::factory()->create([
                 'id_user' => $usuarios->random()->id_user,
                 'id_channel' => 1,

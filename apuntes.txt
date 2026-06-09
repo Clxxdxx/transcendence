@@ -26,3 +26,16 @@ Endpoints que crear:
     Modificar name y nickname ✅
     Eliminar cuenta ✅
     Cerrar sesion ✅
+
+Query asignar stats al user 26
+
+DELETE FROM stats WHERE id_user = 26;
+
+INSERT INTO stats (id_user, id_game, wins, losses, created_at, updated_at) 
+VALUES 
+(26, 1, 18, 7, NOW(), NOW()),  
+(26, 2, 5, 14, NOW(), NOW()),  
+(26, 3, 29, 21, NOW(), NOW()), 
+(26, 4, 12, 12, NOW(), NOW()),
+(26, 5, 1, 12, NOW(), NOW()),
+(26, 6, 32, 27, NOW(), NOW());

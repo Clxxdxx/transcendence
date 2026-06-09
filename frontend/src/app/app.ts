@@ -10,14 +10,17 @@ import { Footer } from './components/footer/footer';
 import { TermsModal } from './components/terms-modal/terms-modal';
 import { Auth } from './services/auth';
 import { Leaderboard } from './components/leaderboard/leaderboard';
-
+import { Profile } from './components/profile/profile';
+import { LossModal } from './components/loss-modal/loss-modal';
+import { WinModal } from './components/win-modal/win-modal';
+import { DrawModal } from './components/draw-modal/draw-modal';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer, 
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard],
+    Leaderboard, Profile, LossModal, WinModal, DrawModal],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -38,6 +41,9 @@ export class App implements OnInit{
     isSendCodeModalOpen = false;
     isChangePassModalOpen = false;
     isTermsModalOpen = false;
+    isLossModalOpen = false;
+    isWinModalOpen = false;
+    isDrawModalOpen = false;
     emailParaCambiar: string = '';
     isLoggedIn = false;
     userInitial = '';
