@@ -62,7 +62,8 @@ services:
       dockerfile: Dockerfile
     container_name: transcendence_nginx
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./backend:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
