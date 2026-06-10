@@ -32,14 +32,14 @@ migrate:
 	@echo "$(YELLOW)Esperando un momento para asegurar la conexión...$(RESET)"
 	@sleep 15
 	@echo "$(YELLOW)Ejecutando migraciones...$(RESET)"
-	docker exec -it transcendence_backend php artisan migrate:fresh --seed
+	docker exec -i transcendence_backend php artisan migrate:fresh --seed
 	docker exec -u root transcendence_backend chmod -R 777 storage bootstrap/cache
 
 # Instala dependencias de Composer y ajusta permisos
 install:
-	docker exec -it transcendence_backend composer install
-	docker exec -it transcendence_backend php artisan key:generate
-	docker exec -it transcendence_backend chmod -R 777 storage bootstrap/cache
+	docker exec -i transcendence_backend composer install
+	docker exec -i transcendence_backend php artisan key:generate
+	docker exec -i transcendence_backend chmod -R 777 storage bootstrap/cache
 
 # Ver logs en tiempo real
 logs:
