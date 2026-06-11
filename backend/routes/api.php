@@ -12,26 +12,26 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 //Lederboard
-Route::get('/users/leaderboard', [UserController::class, 'getLeaderboard'])->middleware('auth:sanctum'); //http://localhost:8080/api/users/leaderboard
+Route::get('/users/leaderboard', [UserController::class, 'getLeaderboard'])->middleware('auth:sanctum'); //https//localhost/api/users/leaderboard
 
 //Login y logout
-Route::post('/login', [AuthController::class, 'login']); //http://localhost:8080/api/login?email=Claudio@gmail.com&password=123456
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); //http://localhost:8080/api/logout
+Route::post('/login', [AuthController::class, 'login']); //https//localhost/api/login?email=Claudio@gmail.com&password=123456
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); //https//localhost/api/logout
 
 //Users
-Route::post('/users', [UserController::class, 'store']); //http://localhost:8080/api/users
-Route::get('/users', [UserController::class, 'index']); //http://localhost:8080/api/users/
-Route::put('/users/{id}', [UserController::class, 'update']); //http://localhost:8080/api/users/1?name=aaaaa&nick=cacscacsac
-Route::put('/users/{id}/password', [UserController::class, 'updatePassword']); //http://localhost:8080/api/users/1/password?password=9876543
-Route::get('/users/{id_user}', [UserController::class, 'show']); //http://localhost:8080/api/users/2
-Route::get('/users/{id_user}/stats', [UserController::class, 'getWinsLossesEachGame']); //http://localhost:8080/api/users/1/stats
-Route::get('/users/{id}/stats/totals', [UserController::class, 'getTotalWinsLosses']); //http://localhost:8080/api/users/9/stats/totals
-Route::delete('/users/{id}', [UserController::class, 'destroy']); //http://localhost:8080/api/users/25
+Route::post('/users', [UserController::class, 'store']); //https//localhost/api/users
+Route::get('/users', [UserController::class, 'index']); //https//localhost/api/users/
+Route::put('/users/{id}', [UserController::class, 'update']); //https//localhost/api/users/1?name=aaaaa&nick=cacscacsac
+Route::put('/users/{id}/password', [UserController::class, 'updatePassword']); //https//localhost/api/users/1/password?password=9876543
+Route::get('/users/{id_user}', [UserController::class, 'show']); //https//localhost/api/users/2
+Route::get('/users/{id_user}/stats', [UserController::class, 'getWinsLossesEachGame']); //https//localhost/api/users/1/stats
+Route::get('/users/{id}/stats/totals', [UserController::class, 'getTotalWinsLosses']); //https//localhost/api/users/9/stats/totals
+Route::delete('/users/{id}', [UserController::class, 'destroy']); //https//localhost/api/users/25
 Route::get('/users/by-email/{email}', [UserController::class, 'getIdByEmail']);
 
 //Games
-Route::get('/games', [GameController::class, 'index']); //http://localhost:8080/api/games/
+Route::get('/games', [GameController::class, 'index']); //https//localhost/api/games/
 
 //Mail
-Route::post('/send-recovery-code', [MailController::class, 'sendRecoveryCode']); //http://localhost:8080/api/send-recovery-code?email=c@gmail.com
-Route::post('/verify-code', [MailController::class, 'verifyCode']); //http://localhost:8080/api/verify-code?email=claudiojaloara@gmail.com&code=592345
+Route::post('/send-recovery-code', [MailController::class, 'sendRecoveryCode']); //https//localhost/api/send-recovery-code?email=c@gmail.com
+Route::post('/verify-code', [MailController::class, 'verifyCode']); //https//localhost/api/verify-code?email=claudiojaloara@gmail.com&code=592345
