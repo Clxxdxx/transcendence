@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root',
 })
 export class Email {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'https://localhost/api';
 
   constructor(private http: HttpClient){}
 
