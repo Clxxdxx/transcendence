@@ -14,13 +14,16 @@ import { Profile } from './components/profile/profile';
 import { LossModal } from './components/loss-modal/loss-modal';
 import { WinModal } from './components/win-modal/win-modal';
 import { DrawModal } from './components/draw-modal/draw-modal';
+import { ChatGlobal } from './components/chat-global/chat-global';
+import { TopPlayers } from './components/top-players/top-players';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer, 
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard, Profile, LossModal, WinModal, DrawModal],
+    Leaderboard, Profile, LossModal, WinModal, DrawModal,
+    ChatGlobal, TopPlayers],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

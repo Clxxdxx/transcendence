@@ -9,19 +9,35 @@
 </app-navbar>
 
 <main> 
-    @if (currentView === 'games') {
+  @if (currentView === 'games') {
     <div class="px-[8vw] py-10">
-      <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
-        Featured Games
-      </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2vw]">
-        @for (game of games; track game.title) {
-          <app-game-card 
-            [title]="game.title" 
-            [svgPath]="game.svg"
-            (loginRequired)="isLoginModalOpen = true">
-          </app-game-card>
+      <div class="flex flex-col xl:flex-row gap-8 lg:gap-12 items-stretch">
+        
+        <div class="flex-1 w-full flex flex-col">
+          <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
+            Featured Games
+          </h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1">
+            @for (game of games; track game.title) {
+              <app-game-card 
+                [title]="game.title" 
+                [svgPath]="game.svg"
+                (loginRequired)="isLoginModalOpen = true">
+              </app-game-card>
+            }
+          </div>
+        </div>
+
+        @if (isLoggedIn) {
+          <div class="w-full xl:w-[320px] 2xl:w-[350px] flex flex-col gap-6 pt-[64px] shrink-0">
+            <app-chat-global class="flex-1 flex flex-col overflow-hidden min-h-0"></app-chat-global>
+            <app-top-players class="flex-1 flex flex-col overflow-hidden min-h-0" 
+                             (viewLeaderboard)="currentView = 'leaderboard'">
+            </app-top-players>
+          </div>
         }
+
       </div>
     </div>
   }
@@ -90,7 +106,6 @@
 @if (isLossModalOpen) {
   <app-loss-modal (close)="isLossModalOpen = false"></app-loss-modal>
 }
-
 @if (isDrawModalOpen) {
   <app-draw-modal (close)="isDrawModalOpen = false"></app-draw-modal>
 }
