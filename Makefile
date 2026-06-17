@@ -14,7 +14,8 @@ all: up migrate
 # Levanta los contenedores en segundo plano y construye si es necesario
 up:
 	@echo "$(GREEN)Levantando servicios de $(NAME)...$(RESET)"
-	docker-compose $(ENV_FILE) up -d --build --wait
+	docker compose $(ENV_FILE) up -d --build --wait
+	# tuve que quitar el guion entre docker compose para que compilen mi linux, amonteag.
 
 # Detiene los contenedores
 down:
