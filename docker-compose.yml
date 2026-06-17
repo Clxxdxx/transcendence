@@ -89,6 +89,22 @@ services:
       depends_on:
         - db
   
+  # Scheduler (ejecuta el scheduler de Laravel cada minuto)
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: transcendence_scheduler
+    restart: always
+    volumes:
+      - ./backend:/var/www/html
+    command: sh -c "while true; do php /var/www/html/artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - transcendence_net
+  
 
 networks:
   transcendence_net:
