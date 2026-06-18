@@ -16,14 +16,19 @@
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2vw]">
         @for (game of games; track game.title) {
-          <app-game-card 
-            [title]="game.title" 
+          <app-game-card
+            [title]="game.title"
             [svgPath]="game.svg"
-            (loginRequired)="isLoginModalOpen = true">
+            (loginRequired)="isLoginModalOpen = true"
+            (vsAiClicked)="onPlayVsAi($event)">
           </app-game-card>
         }
       </div>
     </div>
+  }
+
+  @if (currentView === 'pong') {
+    <app-pong (close)="onPongClose($event)"></app-pong>
   }
 
   @if (currentView === 'leaderboard') {
