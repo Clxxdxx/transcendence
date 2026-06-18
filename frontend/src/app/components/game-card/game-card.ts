@@ -14,11 +14,12 @@ export class GameCard {
   @Input() title: string = '';
   @Input() svgPath: string = '';
   @Output() loginRequired = new EventEmitter<void>();
+  @Output() vsAiClicked = new EventEmitter<string>();
 
   constructor(private auth: Auth) {}
 
   playVsAi() {
-    console.log('Click en ${this.title} modo ia');
+    this.vsAiClicked.emit(this.title);
   }
 
   playRanked() {

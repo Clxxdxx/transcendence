@@ -1,0 +1,59 @@
+RESUMEN DE CAMBIOS
+==================
+Fecha: 2026-06-10
+Branch: main
+
+---
+
+1. NUEVO COMPONENTE: Pong (frontend/src/app/components/pong/)
+-------------------------------------------------------------
+Se ha creado un juego de Pong funcional contra la IA usando Canvas (HTML5).
+
+  Ficheros nuevos:
+    - pong.ts    → Lógica completa del juego
+    - pong.html  → Template con el canvas y botón "Volver"
+
+  Funcionamiento:
+    - Canvas de 800x500 píxeles con bucle de animación via requestAnimationFrame.
+    - El jugador controla su paleta con ArrowUp/ArrowDown o W/S.
+    - La IA sigue el centro de la bola a la misma velocidad que el jugador.
+    - La bola acelera un 5% en cada rebote (límite máximo de velocidad: 12).
+    - El ángulo de rebote varía según el punto de impacto en la paleta.
+    - Primer equipo en llegar a 5 puntos gana la partida.
+    - Al terminar emite un evento 'win', 'loss' o null (si el usuario sale).
+    - Limpia correctamente los event listeners y el requestAnimationFrame al destruirse.
+
+
+2. MODIFICADO: GameCard (game-card.ts)
+--------------------------------------
+  - Se añade el Output `vsAiClicked` que emite el título del juego (string).
+  - El método `playVsAi()` ya no hace un console.log: ahora emite el evento
+    con `this.vsAiClicked.emit(this.title)`.
+
+
+3. MODIFICADO: App raíz (app.ts + app.html)
+--------------------------------------------
+  app.ts:
+    - Se importa e incluye el componente `Pong` en los imports del módulo.
+    - Se añade `onPlayVsAi(title: string)`: si el título es 'Pong' cambia
+      `currentView` a 'pong', mostrando el juego.
+    - Se añade `onPongClose(result)`: cuando la partida termina, vuelve a
+      la vista 'games' y abre el modal de victoria o derrota según corresponda.
+
+  app.html:
+    - Se pasa el nuevo output `(vsAiClicked)="onPlayVsAi($event)"` a
+      `<app-game-card>` dentro del bucle @for.
+    - Se añade el bloque `@if (currentView === 'pong')` que renderiza
+      `<app-pong (close)="onPongClose($event)">`.
+
+---
+
+FLUJO COMPLETO (usuario vs IA en Pong)
+---------------------------------------
+1. El usuario hace clic en "Jugar vs IA" en la card de Pong.
+2. GameCard emite `vsAiClicked` con el valor 'Pong'.
+3. App recibe el evento en `onPlayVsAi` y cambia la vista a 'pong'.
+4. Se muestra el componente Pong con el juego activo.
+5. Al terminar (victoria, derrota o salida manual):
+   - Pong emite `close` con 'win', 'loss' o null.
+   - App vuelve a la vista 'games' y abre el modal correspondiente.

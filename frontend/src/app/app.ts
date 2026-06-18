@@ -14,13 +14,14 @@ import { Profile } from './components/profile/profile';
 import { LossModal } from './components/loss-modal/loss-modal';
 import { WinModal } from './components/win-modal/win-modal';
 import { DrawModal } from './components/draw-modal/draw-modal';
+import { Pong } from './components/pong/pong';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, Navbar, GameCard, AuthModal, Footer, 
+  imports: [CommonModule, Navbar, GameCard, AuthModal, Footer,
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard, Profile, LossModal, WinModal, DrawModal],
+    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -103,5 +104,15 @@ export class App implements OnInit{
       this.auth.logout();
       this.isLoggedIn = false;
       this.currentView = 'games';
+    }
+
+    onPlayVsAi(title: string) {
+      if (title === 'Pong') this.currentView = 'pong';
+    }
+
+    onPongClose(result: 'win' | 'loss' | null) {
+      this.currentView = 'games';
+      if (result === 'win') this.isWinModalOpen = true;
+      if (result === 'loss') this.isLossModalOpen = true;
     }
 }
