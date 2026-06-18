@@ -10,6 +10,7 @@ export class Auth {
   private tokenKey = 'auth_token';
   private email = 'email';
   private id = 'id_user';
+  private nick = 'nick';
 
   constructor(private http: HttpClient){}
 
@@ -34,6 +35,10 @@ export class Auth {
     localStorage.setItem(this.id, id_user)
   }
 
+  setNick(nickname: string): void {
+    localStorage.setItem(this.nick, nickname)
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
@@ -46,10 +51,15 @@ export class Auth {
     return localStorage.getItem(this.id);
   }
 
+  getNick(): string | null {
+    return localStorage.getItem(this.nick);
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.email);
     localStorage.removeItem(this.id);
+    localStorage.removeItem(this.nick);
   }
 
   isLoggedIn(): boolean {

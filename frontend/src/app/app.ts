@@ -16,6 +16,7 @@ import { WinModal } from './components/win-modal/win-modal';
 import { DrawModal } from './components/draw-modal/draw-modal';
 import { ChatGlobal } from './components/chat-global/chat-global';
 import { TopPlayers } from './components/top-players/top-players';
+import { ChatService } from './services/chat-global';
 
 @Component({
   selector: 'app-root',
@@ -37,7 +38,7 @@ export class App implements OnInit{
       { title: 'Connect 4', svg: '/icons/connect4.svg' }
     ];
 
-    constructor(private auth: Auth) {}
+    constructor(private auth: Auth, private chatService: ChatService) {}
 
     isLoginModalOpen = false;
     isSignUpModalOpen = false;
@@ -65,6 +66,7 @@ export class App implements OnInit{
     onLoginSuccess(email: string){
       this.isLoggedIn = true;
       this.userInitial = email.charAt(0).toUpperCase();
+      this.chatService.connect();
     }
 
     onSignUpSuccess() {
@@ -106,5 +108,6 @@ export class App implements OnInit{
       this.auth.logout();
       this.isLoggedIn = false;
       this.currentView = 'games';
+      this.chatService.disconnect();
     }
 }

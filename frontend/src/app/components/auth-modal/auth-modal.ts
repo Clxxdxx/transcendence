@@ -30,6 +30,7 @@ export class AuthModal {
         this.auth.setToken(res.access_token);
         this.auth.setEmail(res.user.email);
         this.auth.setId(res.user.id_user);
+        this.auth.setNick(res.user.nick);
         this.loginSuccess.emit(this.email); 
         this.close.emit();
       },
