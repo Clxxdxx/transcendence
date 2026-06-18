@@ -9,23 +9,27 @@ RESET  = \033[0m
 
 ENV_FILE = --env-file backend/.env
 
+# dependiado si funciona docker compose version usar docker compose o docker-compose
+DOCKER_COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
+
+
 all: up migrate
 
 # Levanta los contenedores en segundo plano y construye si es necesario
 up:
 	@echo "$(GREEN)Levantando servicios de $(NAME)...$(RESET)"
-	docker compose $(ENV_FILE) up -d --build --wait
-	# tuve que quitar el guion entre docker compose para que compilen mi linux, amonteag.
+	$(DOCKER_COMPOSE) $(ENV_FILE) up -d --build --wait
+# cambiado para que sea adaptable a todas las versiones, claudio.
 
 # Detiene los contenedores
 down:
 	@echo "$(RED)Deteniendo servicios...$(RESET)"
-	docker-compose $(ENV_FILE) down
+	$(DOCKER_COMPOSE) $(ENV_FILE) down
 
 # Detiene y borra contenedores, volúmenes y redes huérfanas
 clean:
 	@echo "$(RED)Limpiando contenedores y volúmenes...$(RESET)"
-	docker-compose $(ENV_FILE) down -v --remove-orphans || true
+	$(DOCKER_COMPOSE) $(ENV_FILE) down -v --remove-orphans || true
 	docker network prune -f || true
 
 # Ejecuta las migraciones
@@ -44,7 +48,7 @@ install:
 
 # Ver logs en tiempo real
 logs:
-	docker-compose $(ENV_FILE) logs -f
+	$(DOCKER_COMPOSE) $(ENV_FILE) logs -f
 
 # Entrar a la terminal del backend
 shell-back:
@@ -56,6 +60,6 @@ shell-front:
 
 # Ver estado de los contenedores
 ps:
-	docker-compose $(ENV_FILE) ps
+	$(DOCKER_COMPOSE) $(ENV_FILE) ps
 
 .PHONY: all up down clean migrate install logs shell-back shell-front ps
