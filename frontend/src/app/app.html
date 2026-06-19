@@ -9,7 +9,7 @@
 </app-navbar>
 
 <main> 
- @if (currentView === 'games') {
+  @if (currentView === 'games') {
     <div class="px-[8vw] py-10">
       
       <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
@@ -24,7 +24,8 @@
               <app-game-card 
                 [title]="game.title" 
                 [svgPath]="game.svg"
-                (loginRequired)="isLoginModalOpen = true">
+                (loginRequired)="isLoginModalOpen = true"
+                (vsAiClicked)="onPlayVsAi($event)">
               </app-game-card>
             }
           </div>
@@ -45,6 +46,10 @@
 
       </div>
     </div>
+  }
+
+  @if (currentView === 'pong') {
+    <app-pong (close)="onPongClose($event)"></app-pong>
   }
 
   @if (currentView === 'leaderboard') {

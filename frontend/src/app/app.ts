@@ -17,13 +17,14 @@ import { DrawModal } from './components/draw-modal/draw-modal';
 import { ChatGlobal } from './components/chat-global/chat-global';
 import { TopPlayers } from './components/top-players/top-players';
 import { ChatService } from './services/chat-global';
+import { Pong } from './components/pong/pong';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, Navbar, GameCard, AuthModal, Footer, 
+  imports: [CommonModule, Navbar, GameCard, AuthModal, Footer,
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard, Profile, LossModal, WinModal, DrawModal,
+    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong,
     ChatGlobal, TopPlayers],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -109,5 +110,15 @@ export class App implements OnInit{
       this.isLoggedIn = false;
       this.currentView = 'games';
       this.chatService.disconnect();
+    }
+
+    onPlayVsAi(title: string) {
+      if (title === 'Pong') this.currentView = 'pong';
+    }
+
+    onPongClose(result: 'win' | 'loss' | null) {
+      this.currentView = 'games';
+      if (result === 'win') this.isWinModalOpen = true;
+      if (result === 'loss') this.isLossModalOpen = true;
     }
 }
