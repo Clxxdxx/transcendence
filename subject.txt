@@ -1,0 +1,1061 @@
+Resumen
+
+Este proyecto consiste en realizar tareas que nunca has hecho antes.
+
+Recuerda el comienzo de tu recorrido en la informática.
+
+Mírate ahora; ¡ha llegado el momento de brillar!
+
+Versión: 21.1
+
+Capítulo I
+Instrucciones sobre IA
+● Contexto
+
+Durante tu proceso de aprendizaje, la IA puede ayudarte con muchas tareas diferentes. 
+Dedica tiempo a explorar las distintas capacidades de las herramientas de IA y cómo pueden apoyar tu trabajo.
+
+Sin embargo, debes utilizarlas siempre con cautela y evaluar críticamente los resultados.
+
+Ya se trate de código, documentación, ideas o explicaciones técnicas, nunca puedes estar completamente seguro de que tu pregunta estuviera bien formulada o de que el contenido generado sea correcto.
+
+Tus compañeros son un recurso valioso para ayudarte a evitar errores y puntos ciegos.
+
+● Mensaje principal
+
+☛ Utiliza la IA para reducir tareas repetitivas o tediosas.
+
+☛ Desarrolla habilidades de prompting — tanto para programación como para tareas no relacionadas con programación — que beneficiarán tu carrera profesional futura.
+
+☛ Aprende cómo funcionan los sistemas de IA para anticipar y evitar mejor los riesgos, sesgos y problemas éticos más comunes.
+
+☛ Continúa desarrollando tanto habilidades técnicas como habilidades transversales trabajando con tus compañeros.
+
+☛ Utiliza únicamente contenido generado por IA que comprendas completamente y del que puedas asumir la responsabilidad.
+
+● Reglas para el estudiante
+
+• Debes dedicar tiempo a explorar las herramientas de IA y comprender cómo funcionan, para poder utilizarlas de forma ética y reducir posibles sesgos.
+
+• Debes reflexionar sobre tu problema antes de escribir un prompt; esto te ayudará a redactar prompts más claros, detallados y relevantes utilizando un vocabulario preciso.
+
+• Debes desarrollar el hábito de comprobar, revisar, cuestionar y probar sistemáticamente cualquier cosa generada por IA.
+
+• Debes buscar siempre la revisión de tus compañeros; no dependas únicamente de tu propia validación.
+
+● Resultados esperados
+
+• Desarrollar habilidades de prompting tanto de propósito general como específicas de un dominio.
+
+• Incrementar tu productividad mediante el uso eficaz de herramientas de IA.
+
+• Continuar fortaleciendo el pensamiento computacional, la resolución de problemas, la adaptabilidad y la colaboración.
+
+● Comentarios y ejemplos
+
+• Encontrarás regularmente situaciones — exámenes, evaluaciones y otras — en las que deberás demostrar una comprensión real. 
+Prepárate y continúa desarrollando tanto tus habilidades técnicas como interpersonales.
+
+• Explicar tu razonamiento y debatir con compañeros suele revelar lagunas en tu comprensión. Haz del aprendizaje entre compañeros una prioridad.
+
+• Las herramientas de IA suelen carecer de tu contexto específico y tienden a proporcionar respuestas genéricas. 
+Tus compañeros, que comparten tu entorno, pueden ofrecer perspectivas más relevantes y precisas.
+
+• Mientras que la IA tiende a generar la respuesta más probable, tus compañeros pueden aportar perspectivas alternativas y matices valiosos. 
+Cuenta con ellos como un punto de control de calidad.
+
+✓ Buena práctica
+
+Pregunto a la IA:
+
+«¿Cómo puedo probar una función de ordenación?»
+
+La IA me da algunas ideas.
+
+Las pruebo y reviso los resultados con un compañero.
+
+Refinamos el enfoque juntos.
+
+✗ Mala práctica
+
+Le pido a la IA que escriba una función completa y la copio y pego en mi proyecto.
+
+Durante la evaluación entre compañeros no puedo explicar qué hace ni por qué.
+
+Pierdo credibilidad y suspendo el proyecto.
+
+✓ Buena práctica
+
+Utilizo la IA para ayudarme a diseñar un parser.
+
+Después reviso la lógica con un compañero.
+
+Detectamos dos errores y la reescribimos juntos: mejor, más limpia y completamente comprendida.
+
+✗ Mala práctica
+
+Dejo que Copilot genere el código de una parte clave de mi proyecto.
+
+Compila, pero no puedo explicar cómo maneja las pipes.
+
+Durante la evaluación no soy capaz de justificarlo y suspendo el proyecto.
+
+Capítulo II
+Preámbulo
+
+Antes que nada, ¡enhorabuena por haber alcanzado este hito!
+
+Ahora estás entrando en el proyecto final de tu Common Core y, sí, no será fácil.
+
+Transcendence es un proyecto en grupo (de 4 a 5 personas) diseñado para potenciar vuestra creatividad, 
+confianza en vosotros mismos, capacidad de adaptación a nuevas tecnologías y habilidades de trabajo en equipo.
+
+Crearéis en equipo una aplicación web del mundo real que podrá tomar muchas direcciones diferentes, dependiendo de los módulos que elijáis y de las decisiones que toméis.
+
+Aseguraos de reflexionar juntos como equipo antes de comenzar.
+
+El proyecto está dividido en dos partes:
+
+• La parte obligatoria, que constituye el núcleo fijo del proyecto y a la que todos los miembros del equipo deben contribuir.
+
+• Un conjunto de módulos, que podéis elegir y que cuentan para la nota final.
+
+Este es un proyecto grupal de larga duración.
+
+Las malas decisiones tomadas al principio y la falta de coordinación del equipo supondrán una gran pérdida de tiempo.
+
+La gestión del proyecto y del equipo tendrá un fuerte impacto en vuestros resultados.
+
+Todos los miembros deben participar activamente y contribuir tanto a la parte obligatoria como a los módulos.
+
+II.1 Organización del equipo y gestión del proyecto
+
+Dado que se trata de un proyecto en grupo, una organización adecuada del equipo es fundamental para el éxito.
+
+Debéis establecer funciones y responsabilidades claras desde el principio.
+
+II.1.1 Roles obligatorios del equipo
+
+El equipo debe asignar los siguientes roles.
+
+Una persona puede desempeñar varios roles si el equipo tiene 4 miembros.
+
+• Product Owner (PO)
+
+Define la visión del producto, prioriza funcionalidades y garantiza que el proyecto satisfaga las necesidades de los usuarios.
+
+Responsabilidades:
+
+◦ Mantener el backlog del producto.
+
+◦ Tomar decisiones sobre funcionalidades y prioridades.
+
+◦ Validar el trabajo completado.
+
+◦ Comunicarse con las partes interesadas (evaluadores y compañeros).
+
+• Project Manager (PM) / Scrum Master
+
+Facilita la coordinación del equipo y elimina obstáculos.
+
+Responsabilidades:
+
+◦ Organizar reuniones y sesiones de planificación.
+
+◦ Realizar el seguimiento del progreso y de los plazos.
+
+◦ Garantizar la comunicación del equipo.
+
+◦ Gestionar riesgos y bloqueos.
+
+• Technical Lead / Architect
+
+Supervisa las decisiones técnicas y la arquitectura.
+
+Responsabilidades:
+
+◦ Definir la arquitectura técnica.
+
+◦ Tomar decisiones sobre el stack tecnológico.
+
+◦ Garantizar la calidad del código y las buenas prácticas.
+
+◦ Revisar cambios críticos en el código.
+
+• Developers (todos los miembros)
+
+Implementan funcionalidades y módulos.
+
+Responsabilidades:
+
+◦ Escribir código para las funcionalidades asignadas.
+
+◦ Participar en revisiones de código.
+
+◦ Probar sus implementaciones.
+
+◦ Documentar su trabajo.
+
+Tamaño del equipo
+Equipo de 4 personas
+
+Algunos miembros tendrán varios roles.
+
+Ejemplos:
+
+• PM + Developer
+
+• PO + Developer
+
+Equipo de 5 personas
+
+Los roles pueden estar más especializados.
+
+Ejemplo:
+
+• 1 PO
+
+• 1 PM
+
+• 1 Tech Lead
+
+• 2 Developers
+
+Todos los roles deben estar claramente documentados en el archivo README.md.
+
+II.1.2 Prácticas recomendadas de gestión de proyectos
+
+Aunque no son obligatorias, recomendamos encarecidamente implementar algunas prácticas básicas de gestión para ayudar al equipo a tener éxito.
+
+• Comunicación regular
+
+Reunirse periódicamente (semanal o quincenalmente) para sincronizar el progreso y los bloqueos.
+
+• Organización de tareas
+
+Utilizar herramientas sencillas como GitHub Issues, Trello o incluso un documento compartido para realizar el seguimiento de quién hace cada tarea.
+
+• División del trabajo
+
+Dividir el proyecto en tareas más pequeñas y manejables.
+
+• Revisiones de código
+
+Intentar que al menos otro miembro del equipo revise los cambios importantes en el código.
+
+• Documentación
+
+Mantener notas sobre decisiones importantes y sobre el funcionamiento del sistema.
+
+• Canal de comunicación
+
+Utilizar Discord, Slack o herramientas similares para la comunicación rápida del equipo.
+
+Estas prácticas son recomendaciones destinadas a ayudaros a organizar vuestro trabajo.
+
+Encontrad aquello que mejor funcione para vuestro equipo.
+
+Lo importante es que todo el mundo contribuya y que el trabajo esté bien coordinado.
+
+Durante la evaluación se preguntará al equipo:
+
+• Cómo se distribuyeron los roles.
+
+• Cómo se organizó y dividió el trabajo.
+
+• Cómo os comunicasteis y coordinasteis como equipo.
+
+• Cómo contribuyó cada miembro al proyecto.
+
+Todos los miembros del equipo deben ser capaces de explicar el proyecto y sus contribuciones.
+
+En el siguiente mensaje puedo continuar con la traducción literal completa del Capítulo III (Parte obligatoria).
+
+
+
+
+Usamos cookies
+
+Las cookies ayudan a que este sitio funcione, a medir el uso y a respaldar
+Capítulo III
+Parte obligatoria
+
+El contenido del proyecto depende de vosotros.
+
+Sí, tendréis que aportar vuestras propias ideas y decidir juntos qué aplicación construir como equipo.
+
+Es un paso adelante respecto a lo que habéis hecho anteriormente en el Common Core.
+
+Necesitáis pensar en el proyecto como un todo, no únicamente en las funcionalidades que vais a implementar.
+
+Por supuesto, no tendréis libertad absoluta — existen restricciones — pero la idea es vuestra.
+
+III.1 ¿Qué estamos haciendo?
+
+En primer lugar, tendréis que crear un archivo README.md completo.
+
+Los requisitos detallados para el README se especifican en la sección Requisitos del README al final de este documento.
+
+Ejemplos de proyectos
+
+Vuestro proyecto puede adoptar muchas formas.
+
+Aquí tenéis algunos ejemplos válidos:
+
+• Un juego Pong multijugador con sistema de torneos.
+
+• Una plataforma colaborativa con funcionalidades en tiempo real.
+
+• Una red social con interacción entre usuarios.
+
+• Un juego online (Ajedrez, Tres en Raya, etc.) con sistema de emparejamiento.
+
+• Una aplicación de gestión de proyectos.
+
+• Cualquier otra aplicación web creativa que cumpla los requisitos.
+
+La clave es crear algo atractivo que demuestre vuestras habilidades técnicas y vuestra creatividad.
+
+III.2 Requisitos generales
+
+Construir un proyecto completo es complicado y muchas cosas pueden salir mal.
+
+Para ayudaros, proporcionaremos una lista de requisitos generales que debéis seguir.
+
+Si no los cumplís, vuestro proyecto será rechazado.
+
+Los requisitos son los siguientes:
+
+• El proyecto debe ser una aplicación web
+
+Debe incluir:
+
+◦ Frontend.
+
+◦ Backend.
+
+◦ Base de datos.
+
+• Debe utilizarse Git
+
+Con mensajes de commit claros y significativos.
+
+El repositorio debe mostrar:
+
+◦ Commits de todos los miembros del equipo.
+
+◦ Mensajes de commit claros describiendo los cambios.
+
+◦ Una distribución adecuada del trabajo entre los miembros del equipo.
+
+• El despliegue debe utilizar una solución de contenedorización
+
+Por ejemplo:
+
+• Docker
+
+• Podman
+
+• O equivalente
+
+Y debe ejecutarse mediante un único comando.
+
+• El sitio web debe ser compatible con la última versión estable de Google Chrome.
+• No deben aparecer advertencias ni errores en la consola del navegador.
+• El proyecto debe incluir páginas accesibles de Política de Privacidad y Términos de Servicio
+
+Con contenido relevante.
+
+Política de Privacidad y Términos de Servicio
+
+Estas páginas serán verificadas durante la evaluación.
+
+Deben:
+
+• Ser fácilmente accesibles desde la aplicación (por ejemplo, mediante enlaces en el footer).
+
+• Contener contenido relevante y apropiado para vuestro proyecto.
+
+• No ser páginas vacías ni marcadores de posición.
+
+La ausencia de estas páginas o un contenido inadecuado provocará el rechazo del proyecto.
+
+Soporte multiusuario (obligatorio)
+
+El sitio web debe permitir que varios usuarios lo utilicen simultáneamente.
+
+Este es un requisito fundamental del proyecto.
+
+Los usuarios deben poder interactuar con la aplicación al mismo tiempo sin conflictos ni problemas de rendimiento.
+
+Esto incluye:
+
+• Que varios usuarios puedan estar conectados y activos simultáneamente.
+
+• Que las acciones concurrentes de diferentes usuarios se gestionen correctamente.
+
+• Que las actualizaciones en tiempo real se reflejen para todos los usuarios conectados cuando corresponda.
+
+• Que no se produzcan corrupciones de datos ni condiciones de carrera debido a acciones simultáneas de usuarios.
+
+III.3 Requisitos técnicos
+
+Esta sección, al igual que la anterior, es obligatoria.
+
+Después podréis elegir los módulos que queráis utilizar en el siguiente capítulo.
+
+• Frontend
+
+Debe ser:
+
+◦ Claro.
+
+◦ Responsive.
+
+◦ Accesible desde todos los dispositivos.
+
+• Utilizar un framework CSS o una solución de estilos
+
+Por ejemplo:
+
+• Tailwind CSS
+
+• Bootstrap
+
+• Material-UI
+
+• Styled Components
+
+• Etc.
+
+• Almacenamiento de credenciales
+
+Las credenciales (API Keys, variables de entorno, etc.) deben almacenarse en un archivo local:
+
+.env
+
+que debe estar ignorado por Git.
+
+Además, debéis proporcionar:
+
+.env.example
+• Base de datos
+
+La base de datos debe tener:
+
+◦ Un esquema claro.
+
+◦ Relaciones bien definidas.
+
+• Sistema básico de gestión de usuarios
+
+La aplicación debe disponer de un sistema básico de usuarios.
+
+Los usuarios deben poder registrarse e iniciar sesión de forma segura.
+
+Como mínimo:
+
+◦ Autenticación mediante correo electrónico y contraseña.
+
+◦ Seguridad adecuada (contraseñas hasheadas, uso de salt, etc.).
+
+Métodos adicionales (OAuth, 2FA, etc.) pueden implementarse mediante módulos.
+
+• Validación de formularios
+
+Todos los formularios y entradas de usuario deben validarse correctamente:
+
+◦ En el frontend.
+
+◦ En el backend.
+
+• HTTPS obligatorio
+
+Cualquier conexión al backend debe utilizar HTTPS.
+
+Esto incluye conexiones:
+
+• Desde el navegador.
+
+• Desde scripts.
+
+• Desde APIs externas.
+
+• Desde cualquier otro cliente.
+
+Las conexiones internas del backend pueden no estar cifradas.
+
+Por ejemplo:
+
+• Servidor web ↔ Base de datos.
+
+• Comunicación entre servicios dentro de contenedores.
+
+¿Qué es un framework?
+
+Para este proyecto, un framework se define como una herramienta completa que proporciona:
+
+• Arquitectura estructurada y convenciones
+
+Para organizar el código.
+
+• Funcionalidades integradas
+
+Para tareas comunes como:
+
+• Routing.
+
+• Gestión de estado.
+
+• Etc.
+
+• Ecosistema completo
+
+De herramientas y librerías.
+
+Ejemplos
+Frameworks de frontend
+
+• React
+
+• Vue
+
+• Angular
+
+• Svelte
+
+• Next.js
+
+Frameworks de backend
+
+• Express
+
+• Fastify
+
+• NestJS
+
+• Django
+
+• Flask
+
+• Ruby on Rails
+
+No se consideran frameworks
+
+• jQuery (librería)
+
+• Lodash (librería de utilidades)
+
+• Axios (cliente HTTP)
+
+Nota
+
+En este contexto, React se considera un framework debido a su ecosistema y patrones arquitectónicos, aunque técnicamente sea una librería.
+
+Capítulo IV
+Módulos
+
+Necesitaréis obtener un total de 14 puntos para completar el proyecto.
+
+Valor de los módulos
+
+• Cada módulo Mayor (Major) vale 2 puntos.
+
+• Cada módulo Menor (Minor) vale 1 punto.
+
+Las categorías disponibles son:
+
+• Web
+
+• Accesibilidad e Internacionalización
+
+• Gestión de Usuarios
+
+• Inteligencia Artificial
+
+• Ciberseguridad
+
+• Juegos y Experiencia de Usuario
+
+• DevOps
+
+• Datos y Analítica
+
+• Blockchain
+
+• Módulos de libre elección
+
+Recomendamos encarecidamente elegir los módulos únicamente cuando tengáis claras vuestras ideas y comprendáis bien qué queréis construir.
+
+Además, intentar superar los 14 puntos puede ser una buena idea, especialmente si algún módulo no es validado durante la evaluación.
+
+Importante: Dependencias entre módulos y evaluación
+
+• Algunos módulos requieren que otros se implementen previamente (se indicará mediante notas informativas).
+
+• Los módulos relacionados con juegos:
+
+Oponente IA
+Torneos
+Personalización del juego
+Modo espectador
+Multijugador de más de 3 jugadores
+Añadir otro juego
+
+requieren haber implementado al menos un juego.
+
+• El módulo de estadísticas de juego requiere que exista un juego implementado.
+
+• Las funcionalidades avanzadas de chat requieren la funcionalidad básica de chat del módulo "Interacción entre usuarios".
+
+• SSR (Server-Side Rendering) es incompatible con un backend basado en ICP Blockchain.
+
+Planificad cuidadosamente
+
+Aseguraos de que los módulos elegidos funcionen juntos de manera coherente.
+
+Durante la evaluación
+
+Se os pedirá demostrar cada módulo declarado.
+
+Solo contarán para la nota final los módulos:
+
+• Totalmente funcionales.
+
+• Correctamente implementados.
+
+Los módulos incompletos o que no funcionen obtendrán:
+
+0 puntos.
+
+En el siguiente mensaje continúo con IV.1 Web y IV.2 Accesibilidad e Internacionalización.
+
+
+
+¡Hola! He analizado el texto que has compartido. Se trata de los requisitos técnicos detallados de un proyecto de programación de la escuela 42 (específicamente del proyecto final, ft_transcendence), dividido en módulos "Mayores" (Major) y "Menores" (Minor).
+
+Al tratarse de una lista extensa de requisitos y especificaciones técnicas detalladas (lo que entra en la categoría de texto largo y estructurado), te proporciono una traducción completa, fluida y natural al español en formato Markdown para que puedas conservar perfectamente la estructura original y comprender cada punto sin perder los tecnicismos.
+IV.1 Web
+
+    Major (Mayor): Utilizar un framework tanto para el frontend como para el backend.
+
+        Utilizar un framework de frontend (React, Vue, Angular, Svelte, etc.).
+
+        Utilizar un framework de backend (Express, NestJS, Django, Flask, Ruby on Rails, etc.).
+
+        Los frameworks full-stack (Next.js, Nuxt.js, SvelteKit) cuentan como ambos si utilizas tanto sus capacidades de frontend como de backend.
+
+    Minor (Menor): Utilizar un framework de frontend (React, Vue, Angular, Svelte, etc.).
+
+    Minor (Menor): Utilizar un framework de backend (Express, Fastify, NestJS, Django, etc.).
+
+    Major (Mayor): Implementar funciones en tiempo real utilizando WebSockets o una tecnología similar.
+
+        Actualizaciones en tiempo real entre los clientes.
+
+        Gestionar la conexión/desconexión de forma fluida.
+
+        Transmisión (broadcasting) eficiente de mensajes.
+
+    Major (Mayor): Permitir que los usuarios interactúen con otros usuarios. Los requisitos mínimos son:
+
+        Un sistema de chat básico (enviar/recibir mensajes entre usuarios).
+
+        Un sistema de perfil (ver información del usuario).
+
+        Un sistema de amigos (añadir/eliminar amigos, ver lista de amigos).
+
+    Major (Mayor): Una API pública para interactuar con la base de datos con una clave API segura, limitación de tasa (rate limiting), documentación y al menos 5 endpoints:
+
+        GET /api/{algo}
+
+        POST /api/{algo}
+
+        PUT /api/{algo}
+
+        DELETE /api/{algo}
+
+    Minor (Menor): Utilizar un ORM para la base de datos.
+
+    Minor (Menor): Un sistema completo de notificaciones para todas las acciones de creación, actualización y eliminación.
+
+    Minor (Menor): Funciones colaborativas en tiempo real (espacios de trabajo compartidos, edición en vivo, dibujo colaborativo, etc.).
+
+    Minor (Menor): Renderizado por el lado del servidor (SSR) para mejorar el rendimiento y el SEO.
+
+    Minor (Menor): Aplicación Web Progresiva (PWA) con soporte sin conexión (offline) e instalabilidad.
+
+    Minor (Menor): Sistema de diseño hecho a medida con componentes reutilizables, incluyendo una paleta de colores, tipografía e iconos adecuados (mínimo: 10 componentes reutilizables).
+
+    Minor (Menor): Implementar una funcionalidad de búsqueda avanzada con filtros, ordenación y paginación.
+
+    Minor (Menor): Sistema de subida y gestión de archivos.
+
+        Soportar múltiples tipos de archivos (imágenes, documentos, etc.).
+
+        Validación en el lado del cliente y del servidor (tipo, tamaño, formato).
+
+        Almacenamiento seguro de archivos con un control de acceso adecuado.
+
+        Funcionalidad de vista previa de archivos cuando sea aplicable.
+
+        Indicadores de progreso para las subidas.
+
+        Capacidad para eliminar archivos subidos.
+
+IV.2 Accesibilidad e Internacionalización
+
+    Major (Mayor): Cumplimiento completo de accesibilidad (WCAG 2.1 AA) con soporte para lectores de pantalla, navegación por teclado y tecnologías de asistencia.
+
+    Minor (Menor): Soporte para múltiples idiomas (al menos 3 idiomas).
+
+        Implementar un sistema de i18n (internacionalización).
+
+        Al menos 3 traducciones de idiomas completas.
+
+        Selector de idioma en la interfaz de usuario (UI).
+
+        Todo el texto de cara al usuario debe ser traducible.
+
+    Minor (Menor): Soporte para idiomas de derecha a izquierda (RTL).
+
+        Soporte para al menos un idioma RTL (árabe, hebreo, etc.).
+
+        Espejado completo del diseño (no solo la dirección del texto).
+
+        Ajustes de UI específicos para RTL donde sea necesario.
+
+        Cambio fluido entre LTR (izquierda a derecha) y RTL.
+
+    Minor (Menor): Soporte para navegadores adicionales.
+
+        Compatibilidad total con al menos 2 navegadores adicionales (Firefox, Safari, Edge, etc.).
+
+        Probar y corregir todas las funciones en cada navegador.
+
+        Documentar cualquier limitación específica del navegador.
+
+        UI/UX consistente en todos los navegadores soportados.
+
+IV.3 Gestión de Usuarios
+
+    Major (Mayor): Gestión de usuarios y autenticación estándar.
+
+        Los usuarios pueden actualizar la información de su perfil.
+
+        Los usuarios pueden subir un avatar (con un avatar por defecto si no se proporciona ninguno).
+
+        Los usuarios pueden añadir a otros usuarios como amigos y ver su estado en línea.
+
+        Los usuarios tienen una página de perfil que muestra su información.
+
+    Minor (Menor): Estadísticas de juego e historial de partidas (requiere un módulo de juego).
+
+        Registrar las estadísticas de juego del usuario (victorias, derrotas, clasificación, nivel, etc.).
+
+        Mostrar el historial de partidas (juegos 1v1, fechas, resultados, oponentes).
+
+        Mostrar logros y progresión.
+
+        Integración con una tabla de clasificación (leaderboard).
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). No puedes reclamar este módulo sin un juego funcional.
+
+    Minor (Menor): Implementar autenticación remota con OAuth 2.0 (Google, GitHub, 42, etc.).
+
+    Major (Mayor): Sistema de permisos avanzado:
+
+        Ver, editar y eliminar usuarios (CRUD).
+
+        Gestión de roles (administrador, usuario, invitado, moderador, etc.).
+
+        Diferentes vistas y acciones basadas en el rol del usuario.
+
+    Major (Mayor): Un sistema de organizaciones:
+
+        Crear, editar y eliminar organizaciones.
+
+        Añadir usuarios a las organizaciones.
+
+        Eliminar usuarios de las organizaciones.
+
+        Ver organizaciones y permitir a los usuarios realizar acciones específicas dentro de una organización (mínimo: crear, leer, actualizar).
+
+    Minor (Menor): Implementar un sistema completo de 2FA (autenticación de dos factores) para los usuarios.
+
+    Minor (Menor): Panel de control (dashboard) de analíticas e información sobre la actividad de los usuarios.
+
+IV.4 Inteligencia Artificial
+
+    Major (Mayor): Introducir un oponente de IA para los juegos.
+
+        La IA debe ser un desafío y ser capaz de ganar ocasionalmente.
+
+        La IA debe simular un comportamiento humano (no un juego perfecto).
+
+        Si implementas opciones de personalización del juego, la IA debe ser capaz de utilizarlas.
+
+        Debes ser capaz de explicar la implementación de tu IA durante la evaluación.
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). La IA debe ser capaz de jugar a tu juego de manera competente.
+
+    Major (Mayor): Implementar un sistema completo de RAG (Generación Aumentada por Recuperación).
+
+        Interactuar con un gran conjunto de datos de información.
+
+        Los usuarios pueden hacer preguntas y obtener respuestas relevantes.
+
+        Implementar una recuperación de contexto y generación de respuestas adecuadas.
+
+    Major (Mayor): Implementar una interfaz de sistema LLM completa.
+
+        Generar texto y/o imágenes basadas en la entrada del usuario.
+
+        Manejar las respuestas en streaming de forma adecuada.
+
+        Implementar manejo de errores y limitación de tasa (rate limiting).
+
+    Major (Mayor): Sistema de recomendación utilizando aprendizaje automático (machine learning).
+
+        Recomendaciones personalizadas basadas en el comportamiento del usuario.
+
+        Filtrado colaborativo o filtrado basado en contenido.
+
+        Mejorar continuamente las recomendaciones a lo largo del tiempo.
+
+    Minor (Menor): IA de moderación de contenido (automoderación, autoeliminación, autoadvertencia, etc.).
+
+    Minor (Menor): Integración de voz/habla para accesibilidad o interacción.
+
+    Minor (Menor): Análisis de sentimiento para el contenido generado por los usuarios.
+
+    Minor (Menor): Sistema de reconocimiento y etiquetado de imágenes.
+
+IV.5 Ciberseguridad
+
+    Major (Mayor): Implementar WAF/ModSecurity (reforzado) + HashiCorp Vault para secretos:
+
+        Configurar ModSecurity/WAF estricto.
+
+        Gestionar los secretos en Vault (claves API, credenciales, variables de entorno), cifrados y aislados.
+
+IV.6 Juegos y Experiencia de Usuario
+
+    Major (Mayor): Implementar un juego completo basado en la web donde los usuarios puedan jugar entre sí.
+
+        El juego puede ser multijugador en tiempo real (por ejemplo, Pong, Ajedrez, Tres en raya, juegos de cartas, etc.).
+
+        Los jugadores deben poder jugar partidas en vivo.
+
+        El juego debe tener reglas claras y condiciones de victoria/derrota.
+
+        El juego puede ser en 2D o 3D.
+
+    Major (Mayor): Jugadores remotos — Permitir que dos jugadores en ordenadores separados jueguen al mismo juego en tiempo real.
+
+        Manejar la latencia de la red y las desconexiones de manera fluida.
+
+        Proporcionar una experiencia de usuario fluida para el juego remoto.
+
+        Implementar lógica de reconexión.
+
+    Major (Mayor): Juego multijugador (más de dos jugadores).
+
+        Soporte para tres o más jugadores simultáneamente.
+
+        Mecánicas de juego justas para todos los participantes.
+
+        Sincronización adecuada en todos los clientes.
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). Estás ampliando tu juego para soportar tres o más jugadores.
+
+    Major (Mayor): Añadir otro juego con historial de usuarios y emparejamiento (matchmaking).
+
+        Implementar un segundo juego diferente.
+
+        Registrar el historial de usuario y las estadísticas para este juego.
+
+        Implementar un sistema de emparejamiento.
+
+        Mantener el rendimiento y la capacidad de respuesta.
+
+        Este módulo requiere que ya hayas implementado un primer juego (ver el módulo "Implementar un juego completo basado en la web" más arriba). No puedes reclamar este módulo sin tener un primer juego funcional.
+
+    Major (Mayor): Implementar gráficos 3D avanzados utilizando una biblioteca como Three.js o Babylon.js.
+
+        Crear un entorno 3D inmersivo.
+
+        Implementar técnicas de renderizado avanzadas.
+
+        Garantizar un rendimiento fluido y la interacción del usuario.
+
+    Minor (Menor): Funciones de chat avanzadas (mejora el chat básico del módulo "Interacción de usuarios").
+
+        Capacidad de bloquear a usuarios para que no te envíen mensajes.
+
+        Invitar a usuarios a jugar juegos directamente desde el chat.
+
+        Notificaciones de juegos/torneos en el chat.
+
+        Acceso a los perfiles de usuario desde la interfaz de chat.
+
+        Persistencia del historial de chat.
+
+        Indicadores de escritura y confirmaciones de lectura.
+
+        Este módulo mejora el sistema de chat básico del módulo "Permitir que los usuarios interactúen". Por lo tanto, no puedes reclamar este módulo sin haber implementado primero el chat básico.
+
+    Minor (Menor): Implementar un sistema de torneos.
+
+        Orden de enfrentamientos claro y sistema de llaves/cuadros (brackets).
+
+        Registrar quién juega contra quién.
+
+        Sistema de emparejamiento para los participantes del torneo.
+
+        Registro y gestión del torneo.
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). No puedes tener torneos sin un juego al que jugar.
+
+    Minor (Menor): Opciones de personalización del juego.
+
+        Potenciadores (power-ups), ataques o habilidades especiales.
+
+        Diferentes mapas o temas.
+
+        Ajustes de juego personalizables.
+
+        Las opciones por defecto deben estar disponibles.
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). Estás añadiendo personalización a un juego existente.
+
+    Minor (Menor): Un sistema de gamificación para recompensar a los usuarios por sus acciones.
+
+        Implementar al menos 3 de los siguientes elementos: logros, insignias, tablas de clasificación, sistema de nivel/XP, desafíos diarios, recompensas.
+
+        El sistema debe ser persistente (almacenado en la base de datos).
+
+        Feedback visual para los usuarios (notificaciones, barras de progreso, etc.).
+
+        Reglas y mecánicas de progresión claras.
+
+        Aunque este es un módulo Menor (1 punto), implementar un sistema de gamificación completo puede ser sustancial. Céntrate en la calidad sobre la cantidad: tres características bien implementadas son mejores que seis mal hechas.
+
+    Minor (Menor): Implementar el modo espectador para los juegos.
+
+        Permitir a los usuarios ver juegos en curso.
+
+        Actualizaciones en tiempo real para los espectadores.
+
+        Opcional: chat de espectadores.
+
+        Este módulo requiere que hayas implementado al menos un juego (ver sección "Juegos y experiencia de usuario"). Los espectadores necesitan un juego que mirar.
+
+IV.7 Devops
+
+    Major (Mayor): Infraestructura para la gestión de registros (logs) utilizando ELK (Elasticsearch, Logstash, Kibana).
+
+        Elasticsearch para almacenar e indexar registros.
+
+        Logstash para recopilar y transformar registros.
+
+        Kibana para visualización y paneles de control.
+
+        Implementar políticas de retención y archivo de registros.
+
+        Acceso seguro a todos los componentes.
+
+    Major (Mayor): Sistema de monitorización con Prometheus y Grafana.
+
+        Configurar Prometheus para recopilar métricas.
+
+        Configurar exportadores e integraciones.
+
+        Crear paneles de control de Grafana personalizados.
+
+        Configurar reglas de alerta.
+
+        Acceso seguro a Grafana.
+
+    Major (Mayor): Backend como microservicios.
+
+        Diseñar servicios débilmente acoplados (loosely-coupled) con interfaces claras.
+
+        Utilizar APIs REST o colas de mensajes para la comunicación.
+
+        Cada servicio debe tener una única responsabilidad.
+
+    Minor (Menor): Sistema de comprobación de estado (health check) y página de estado con copias de seguridad automatizadas y procedimientos de recuperación ante desastres.
+
+IV.8 Datos y Analítica
+
+    Major (Mayor): Panel de analíticas avanzado con visualización de datos.
+
+        Gráficos e ilustraciones interactivos (líneas, barras, tarta, etc.).
+
+        Actualizaciones de datos en tiempo real.
+
+        Funcionalidad de exportación (PDF, CSV, etc.).
+
+        Rangos de fechas y filtros personalizables.
+
+    Minor (Menor): Funcionalidad de exportación e importación de datos.
+
+        Exportar datos en múltiples formatos (JSON, CSV, XML, etc.).
+
+        Importar datos con validación.
+
+        Soporte para operaciones masivas (bulk).
+
+    Minor (Menor): Características de cumplimiento del RGPD (GDPR).
+
+        Permitir a los usuarios solicitar sus datos.
+
+        Eliminación de datos con confirmación.
+
+        Exportar datos de usuario en un formato legible.
+
+        Correos electrónicos de confirmación para las operaciones de datos.
+IV.9 Blockchain
+
+    Major (Mayor): Almacenar las puntuaciones de los torneos en la Blockchain.
+
+        Utilizar contratos inteligentes (smart contracts) de Solidity en una blockchain de prueba de Avalanche.
+
+        Implementar contratos inteligentes para registrar, gestionar y recuperar las puntuaciones de los torneos.
+
+        Garantizar la integridad e inmutabilidad de los datos.
+
+    Minor (Menor): Utilizar ICP (Internet Computer Protocol) para un backend que se ejecute en una blockchain (incompatible con SSR/Renderizado por el lado del servidor).
+
+IV.10 Módulos de elección propia (Módulos a elección)
+
+    Major (Mayor): Implementar un módulo personalizado que no esté listado anteriormente.
+
+        El módulo debe ser sustancial y demostrar complejidad técnica.
+
+        Debes proporcionar una justificación adecuada en tu archivo README.md explicando:
+
+            Por qué elegiste este módulo.
+
+            Qué desafíos técnicos aborda.
+
+            Cómo aporta valor a tu proyecto.
+
+            Por qué merece el estatus de módulo Mayor (2 puntos).
+
+        Tomar atajos o implementar características triviales resultará en el rechazo del módulo.
+
+        Sé creativo y piensa fuera de lo común (piensa de forma innovadora).
+
+        El módulo debe ser relevante para el contexto de tu proyecto.
+
+    Minor (Menor): Igual que el módulo Mayor, pero con un alcance más reducido y menos complejo.
+
+        Aún así debe demostrar habilidad técnica y creatividad.
+
+        Debe aportar un valor significativo a tu proyecto.
+
+        Requiere justificación en el archivo README.md (similar al Mayor, pero para 1 punto).
+
+Con esto ya tienes la lista completa de las opciones tecnológicas que ofrece el sujeto de ft_transcendence. ¡Mucho éxito con la elección de tus módulos y el desarrollo del proyecto!

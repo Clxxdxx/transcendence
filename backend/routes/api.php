@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\HealthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -35,3 +36,6 @@ Route::get('/games', [GameController::class, 'index']); //https//localhost/api/g
 //Mail
 Route::post('/send-recovery-code', [MailController::class, 'sendRecoveryCode']); //https//localhost/api/send-recovery-code?email=c@gmail.com
 Route::post('/verify-code', [MailController::class, 'verifyCode']); //https//localhost/api/verify-code?email=claudiojaloara@gmail.com&code=592345
+
+// Health check
+Route::get('/health', [HealthController::class, 'health']);
