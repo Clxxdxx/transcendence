@@ -14,6 +14,9 @@ import { Profile } from './components/profile/profile';
 import { LossModal } from './components/loss-modal/loss-modal';
 import { WinModal } from './components/win-modal/win-modal';
 import { DrawModal } from './components/draw-modal/draw-modal';
+import { ChatGlobal } from './components/chat-global/chat-global';
+import { TopPlayers } from './components/top-players/top-players';
+import { ChatService } from './services/chat-global';
 import { Pong } from './components/pong/pong';
 
 @Component({
@@ -21,7 +24,8 @@ import { Pong } from './components/pong/pong';
   standalone: true,
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer,
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong],
+    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong,
+    ChatGlobal, TopPlayers],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -35,7 +39,7 @@ export class App implements OnInit{
       { title: 'Connect 4', svg: '/icons/connect4.svg' }
     ];
 
-    constructor(private auth: Auth) {}
+    constructor(private auth: Auth, private chatService: ChatService) {}
 
     isLoginModalOpen = false;
     isSignUpModalOpen = false;
@@ -63,6 +67,7 @@ export class App implements OnInit{
     onLoginSuccess(email: string){
       this.isLoggedIn = true;
       this.userInitial = email.charAt(0).toUpperCase();
+      this.chatService.connect();
     }
 
     onSignUpSuccess() {
@@ -104,6 +109,7 @@ export class App implements OnInit{
       this.auth.logout();
       this.isLoggedIn = false;
       this.currentView = 'games';
+      this.chatService.disconnect();
     }
 
     onPlayVsAi(title: string) {

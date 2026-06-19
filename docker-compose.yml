@@ -6,7 +6,7 @@ services:
     restart: always
     healthcheck:
       # Usamos mariadb-admin ping, que es más directo
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$${MARIADB_ROOT_PASSWORD}"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 10      # Aumentamos a 10 para dar 50 segundos de margen
@@ -88,6 +88,18 @@ services:
         - transcendence_net
       depends_on:
         - db
+      
+  chat-server:
+      image: node:18-alpine
+      container_name: transcendence_chat
+      working_dir: /app
+      command: sh -c "npm install ws && node server.js"
+      volumes:
+        - ./chat:/app
+      ports:
+        - "8085:8085"
+      networks:
+        - transcendence_net  
   
   # Scheduler (ejecuta el scheduler de Laravel cada minuto)
   scheduler:
@@ -105,7 +117,6 @@ services:
     networks:
       - transcendence_net
   
-
 networks:
   transcendence_net:
     driver: bridge
