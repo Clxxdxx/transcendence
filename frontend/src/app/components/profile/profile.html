@@ -111,6 +111,42 @@
 
         </div>
       }
+      <div class="col-span-1 md:col-span-2 xl:col-span-3 p-6 bg-[#0f1333]/90 rounded-2xl border border-blue-500/20">
+        <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+          <span class="text-cyan-400">🕒</span> Recent Activity
+        </h3>
+        
+        <div class="max-h-[162px] overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar">
+          <table class="w-full text-left text-sm text-slate-400 border-collapse">
+            <thead class="text-[10px] uppercase text-cyan-400/60 border-b border-blue-950 sticky top-0 bg-[#0f1333] z-10">
+              <tr>
+                <th class="pb-3 bg-[#0f1333]">Game</th>
+                <th class="pb-3 bg-[#0f1333]">Result</th>
+                <th class="pb-3 bg-[#0f1333]">Score</th>
+                <th class="pb-3 text-right bg-[#0f1333]">Date</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-blue-950/30">
+              @for (activity of recentActivity; track $index) {
+                <tr class="hover:bg-white/5 transition-colors">
+                  <td class="py-3 text-white font-medium">{{ activity.game_name }}</td>
+                  <td class="py-3 font-bold" [ngClass]="activity.result === 'Victory' ? 'text-emerald-400' : 'text-red-400'">
+                    {{ activity.result }}
+                  </td>
+                  <td class="py-3 font-mono">{{ activity.points }} pts</td>
+                  <td class="py-3 text-right text-slate-500 text-xs">{{ activity.date }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="py-6 text-center text-slate-500 italic">
+                    No hay actividad reciente.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

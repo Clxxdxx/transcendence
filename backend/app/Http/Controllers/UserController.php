@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Stat;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -188,6 +190,27 @@ class UserController extends Controller
         }
 
         return response()->json($leaderboard, 200);
+    }
+
+    public function getRecentActivity(string $id)
+    {
+        $activities = DB::table('match_user')
+            ->join('matches', 'match_user.id_match', '=', 'matches.id_match')
+            ->join('games', 'matches.id_game', '=', 'games.id_game')
+            ->where('match_user.id_user', $id)
+            ->orderBy('match_user.date', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) use ($id) {
+                return [
+                    'game_name' => $item->name ?? 'Unknown',
+                    'result'    => ($item->id_winner == $id) ? 'Victory' : 'Defeat',
+                    'points'    => $item->points,
+                    'date'      => \Carbon\Carbon::parse($item->date)->diffForHumans(),
+                ];
+            });
+
+        return response()->json($activities);
     }
 
 }
