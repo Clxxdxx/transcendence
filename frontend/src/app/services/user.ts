@@ -56,7 +56,11 @@ export class User {
   }
 
   getAllGames(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/games`);
-}
+    return this.http.get<any[]>(`${this.apiUrl}/games`);
+  }
+
+  getRecentActivity(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/recentActivity/${id}`);
+  }
 }
 
