@@ -13,14 +13,13 @@ import { forkJoin } from 'rxjs'; // 1. Importamos forkJoin para controlar el flu
 export class Profile implements OnInit {
   userId!: number;
 
-  // Datos del formulario
   name: string = '';
   nick: string = '';
 
-  // Estadísticas reales del backend
   totalWins: number = 0;
   totalLosses: number = 0;
   gameStats: any[] = [];
+  recentActivity: any[] = [];
 
   isSaving: boolean = false;
 
@@ -34,7 +33,7 @@ export class Profile implements OnInit {
     'Connect 4': 'connect4.svg'
   };
 
-  const iconFile = iconsMap[gameName] || 'tic-tac-toe.svg'; // Icono por defecto si no encuentra coincidencia
+  const iconFile = iconsMap[gameName] || 'tic-tac-toe.svg';
   return `/icons/${iconFile}`;
 }
 
@@ -48,7 +47,6 @@ export class Profile implements OnInit {
         this.name = user.name || '';
         this.nick = user.nick || '';
 
-        // 2. Ejecutamos la carga de estadísticas pasándole los datos
         this.loadStats();
       },
       error: (err) => {
@@ -59,16 +57,16 @@ export class Profile implements OnInit {
 
   loadStats(): void {
     forkJoin({
-      allGames: this.userService.getAllGames(), // Necesitas este endpoint en tu service
+      allGames: this.userService.getAllGames(),
       userStats: this.userService.getGameStats(this.userId),
-      totals: this.userService.getTotalStats(this.userId)
+      totals: this.userService.getTotalStats(this.userId),
+      recent: this.userService.getRecentActivity(this.userId)
     }).subscribe({
-      next: ({ allGames, userStats, totals }) => {
+      next: ({ allGames, userStats, totals, recent }) => {
         // 1. Totales
         this.totalWins = Number(totals.TotalWins || 0);
         this.totalLosses = Number(totals.TotalLosses || 0);
 
-        // 2. Cruce de datos: Mostrar todos los juegos, con 0 si no hay stats
         this.gameStats = allGames.map(game => {
           const stat = userStats.find(s => s.GameName === game.name);
           return {
@@ -77,7 +75,7 @@ export class Profile implements OnInit {
             Losses: stat ? Number(stat.Losses) : 0
           };
         });
-        
+        this.recentActivity = recent;
         this.cdr.detectChanges();
       }
     });
@@ -101,7 +99,7 @@ export class Profile implements OnInit {
       next: (res) => {
         alert('¡Perfil actualizado con éxito!');
         this.isSaving = false;
-        this.cdr.detectChanges(); // Mantenemos la vista fresca al guardar
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
