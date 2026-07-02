@@ -1,0 +1,627 @@
+================================================================================
+DOCUMENTACIÓN COMPLETA - INFRAESTRUCTURA ELK (ELASTICSEARCH, LOGSTASH, KIBANA)
+Proyecto: Transcendence
+Fecha: 2026-06-25
+================================================================================
+
+1. INTRODUCCIÓN Y ARQUITECTURA
+================================================================================
+
+La infraestructura ELK ha sido implementada para proporcionar un sistema 
+centralizado de gestión, procesamiento y visualización de logs de la aplicación 
+Laravel (backend) de Transcendence.
+
+COMPONENTES PRINCIPALES:
+- Elasticsearch 8.10.2: Motor de búsqueda y almacenamiento de datos
+- Logstash 8.10.2: Pipeline de procesamiento y transformación de logs
+- Kibana 8.10.2: Interfaz web de visualización y análisis
+
+BENEFICIOS DE ESTA ARQUITECTURA:
+✓ Centralización: Todos los logs en un único lugar accesible
+✓ Escalabilidad: Fácil de escalar a múltiples instancias
+✓ Búsqueda potente: Elasticsearch permite búsquedas avanzadas por cualquier campo
+✓ Visualización: Kibana permite crear dashboards y alertas
+✓ Retención automática: ILM (Index Lifecycle Management) gestiona la retención
+✓ Producción-lista: Seguridad, autenticación, y monitoreo deshabilitados para 
+  desarrollo pero fácilmente activables
+✓ Docker-native: Completamente containerizada, se levanta con un solo comando
+
+
+2. DIAGRAMA DE FLUJO DE LOGS
+================================================================================
+
+    ┌─────────────────────┐
+    │  Laravel Backend    │
+    │  (Monolog Logger)   │
+    └──────────┬──────────┘
+               │ LOG_CHANNEL=logstash
+               │ SocketHandler TCP
+               ↓
+    ┌─────────────────────┐
+    │ Logstash            │
+    │ Puerto 5000 (TCP)   │
+    │ Codec: json_lines   │
+    └──────────┬──────────┘
+               │ (filtros + transformaciones)
+               │ index: laravel-logs-write
+               ↓
+    ┌─────────────────────┐
+    │ Elasticsearch       │
+    │ Índice base:        │
+    │ laravel-logs-000001 │
+    │ (ILM managed)       │
+    └──────────┬──────────┘
+               │
+               ↓
+    ┌─────────────────────┐
+    │ Kibana              │
+    │ Puerto 5602         │
+    │ (Visualización)     │
+    └─────────────────────┘
+
+
+3. ARCHIVOS CREADOS Y MODIFICADOS
+================================================================================
+
+3.1 ARCHIVOS NUEVOS CREADOS
+────────────────────────────
+
+A) Estructura de directorios: infra/logging/
+   └── infra/
+       └── logging/
+           ├── docker-compose.prod.yml ........... Configuración Docker Compose
+           ├── create_resources.sh ............... Script de inicialización
+           ├── elasticsearch/
+           │   ├── ilm_policy.json ............... Política de gestión del ciclo de vida
+           │   └── index_template.json ........... Template de índices
+           ├── kibana/ ............................ (Reservado para configuración)
+           └── logstash/
+               └── pipeline/
+                   └── logstash.conf ............ Pipeline de Logstash
+
+
+DETALLE DE ARCHIVOS CREADOS:
+
+1) infra/logging/docker-compose.prod.yml (NUEVO)
+   ─────────────────────────────────────────────
+   Propósito: Definir servicios Elasticsearch, Logstash y Kibana
+   Ubicación: /home/cress/Escritorio/transcendence/infra/logging/
+   Tamaño aproximado: ~150 líneas
+   
+   Componentes:
+   • Service elasticsearch:8.10.2
+     - Puerto: 9200 (interno)
+     - Volumen: transcendence_esdata (persistencia)
+     - Variables: discovery.type=single-node, cluster.name=transcendence-es
+     - Seguridad: xpack.security.enabled=false (desarrollo)
+     - Límites: ulimits para memory locking
+   
+   • Service kibana:8.10.2
+     - Puerto: 5602 (mapeado de 5601 interno)
+     - Conexión: http://elasticsearch:9200 (sin autenticación)
+     - Variables: SERVER_HOST=0.0.0.0, ELASTICSEARCH_HOSTS
+   
+   • Service logstash:8.10.2
+     - Puerto: 5000 (TCP para entrada de logs)
+     - Volumen: Pipeline config mounted (read-only)
+     - Conexión: http://elasticsearch:9200
+     - Pipeline: logstash.conf
+
+
+2) infra/logging/create_resources.sh (NUEVO)
+   ──────────────────────────────────────────
+   Propósito: Script de inicialización automatizada de infraestructura ELK
+   Ubicación: /home/cress/Escritorio/transcendence/infra/logging/
+   Ejecución: En paralelo con 'make logs-init'
+   
+   Funcionalidades:
+   ✓ Espera a que Elasticsearch esté listo (con timeout de 60 intentos)
+   ✓ Crea ILM Policy: laravel-logs-policy
+   ✓ Sube Index Template: laravel-logs-template
+   ✓ Inicializa primer índice: laravel-logs-000001 con alias
+   ✓ Espera a que Kibana esté listo (con timeout de 30 intentos)
+   ✓ Crea patrón de índice en Kibana (si está listo)
+   ✓ Importa dashboard NDJSON (si existe)
+   ✓ Manejo robusto de errores (continúa incluso si Kibana falla)
+   
+   Variables de entorno:
+   - ES_HOST: URL de Elasticsearch (default: http://elasticsearch:9200)
+   - KIBANA_HOST: URL de Kibana (default: http://kibana:5601)
+
+
+3) infra/logging/elasticsearch/ilm_policy.json (NUEVO)
+   ───────────────────────────────────────────────────
+   Propósito: Definir políticas de ciclo de vida para índices de logs
+   Ubicación: /home/cress/Escritorio/transcendence/infra/logging/elasticsearch/
+   
+   Fases configuradas:
+   • HOT: Recibe nuevos logs, tamaño ilimitado, no se ha hecho rollover
+   • WARM: 30 días después de creado, replicación degradada
+   • COLD: 90 días después de creado, almacenamiento searchable
+   • DELETE: 365 días después de creado, eliminación automática
+   
+   Beneficio: Retención automática, optimización de almacenamiento por antigüedad
+
+
+4) infra/logging/elasticsearch/index_template.json (NUEVO)
+   ────────────────────────────────────────────────────────
+   Propósito: Template para crear índices que matcheen laravel-logs-*
+   Ubicación: /home/cress/Escritorio/transcendence/infra/logging/elasticsearch/
+   
+   Configuraciones:
+   • Patrón: laravel-logs-* (aplica a todos los índices que empiezan así)
+   • Alias de escritura: laravel-logs-write
+   • Número de shards: 1 (desarrollo)
+   • Número de replicas: 0 (desarrollo)
+   • Configuración ILM: Vinculado a laravel-logs-policy
+   • Mappings: Define campos clave (message, level, timestamp, service, etc.)
+
+
+5) infra/logging/logstash/pipeline/logstash.conf (NUEVO)
+   ─────────────────────────────────────────────────────
+   Propósito: Pipeline de Logstash para procesar logs desde Laravel
+   Ubicación: /home/cress/Escritorio/transcendence/infra/logging/logstash/pipeline/
+   
+   Estructura:
+   
+   INPUT: TCP Plugin
+   - Puerto: 5000
+   - Codec: json_lines (espera JSON con saltos de línea)
+   - Tipo: "laravel" (para identificar origen)
+   
+   FILTER: Procesamiento de eventos
+   - Si [type] == "laravel":
+     * Normalizador de timestamp: Match ISO8601 y formato "YYYY-MM-DD HH:mm:ss"
+     * Agregador de campo: Añade "service": "backend" a todos los eventos
+   
+   OUTPUT: Dual
+   - Elasticsearch: Índice "laravel-logs-write" (alias gestionado por ILM)
+   - Stdout: Salida en consola con formato rubydebug (debug)
+
+
+3.2 ARCHIVOS MODIFICADOS
+────────────────────────
+
+1) backend/.env (MODIFICADO)
+   ────────────────────────
+   Línea cambio: LOG_CHANNEL=logstash
+   Antes: LOG_CHANNEL=emergency
+   Después: LOG_CHANNEL=logstash
+   
+   Propósito: Activar envío de logs a Logstash en lugar de archivo local
+   Impacto: Todos los logs de Laravel ahora van a Elasticsearch
+
+
+2) backend/config/logging.php (MODIFICADO)
+   ─────────────────────────────────────────
+   
+   Añadido el canal 'logstash' (no existía en el archivo original):
+   
+   'logstash' => [
+       'driver' => 'monolog',
+       'level' => env('LOG_LEVEL', 'debug'),
+       'handler' => Monolog\Handler\SocketHandler::class,
+       'handler_with' => [
+           'connectionString' => env('LOGSTASH_CONNECTION', 'tcp://logstash:5000'),
+       ],
+       'formatter' => Monolog\Formatter\JsonFormatter::class,
+       'processors' => [PsrLogMessageProcessor::class],
+   ],
+   
+   Componentes:
+   • Driver: monolog (framework de logging de Laravel)
+   • Handler: SocketHandler (conexión TCP a Logstash)
+   • Formatter: JsonFormatter (serializa logs a JSON)
+   • Conexión: tcp://logstash:5000 (resoluble en red Docker)
+
+
+3) Makefile (MODIFICADO)
+   ──────────────────────
+   
+   • target 'up': incluye -f infra/logging/docker-compose.prod.yml en todos los compose
+   • target 'down': ídem
+   • target 'clean': ídem
+   • target 'all': ahora llama up → migrate → logs-init
+   • target 'logs-init' (NUEVO):
+     Copia infra/logging/ al contenedor backend y ejecuta create_resources.sh
+
+
+4) docker-compose.yml (ROOT, sin cambios)
+   ────────────────────────────────────────
+   La red transcendence_net ya existía como bridge en el compose principal.
+   El compose ELK se une a ella sin declaración external para evitar conflictos.
+
+
+5) bootstrap/app.php (MODIFICADO)
+   ─────────────────────────────────
+   Añadido handler de excepciones no controladas en withExceptions():
+   Cualquier excepción no capturada por ningún controller se loguea como
+   'exception.unhandled' con nivel ERROR incluyendo clase, mensaje, archivo y línea.
+
+
+6) app/Http/Controllers/AuthController.php (MODIFICADO)
+   ──────────────────────────────────────────────────────
+   • login exitoso  → Log::info('login.success', [user_id, nick, ip])
+   • login fallido  → Log::warning('login.failed', [email, ip])
+   • logout         → Log::info('logout', [user_id, nick, ip])
+
+
+7) app/Http/Controllers/UserController.php (MODIFICADO)
+   ──────────────────────────────────────────────────────
+   • registro       → Log::info('user.registered', [user_id, nick, email])
+   • borrado        → Log::warning('user.deleted', [user_id, nick])
+   • cambio de pass → Log::warning('user.password_changed', [user_id, nick])
+
+
+8) app/Http/Controllers/MailController.php (MODIFICADO)
+   ──────────────────────────────────────────────────────
+   • solicitud de recuperación → Log::warning('password.recovery_requested', [email, ip])
+   • código correcto           → Log::info('password.recovery_verified', [email, ip])
+   • código incorrecto         → Log::warning('password.recovery_failed', [email, ip])
+
+
+9) app/Http/Controllers/HealthController.php (MODIFICADO)
+   ─────────────────────────────────────────────────────────
+   • sistema degradado → Log::error('health.degraded', [checks])
+     Solo loguea cuando alguno de los checks (BD, caché, storage) falla.
+
+
+
+FASE 5: Sistema listo
+─────────────────────
+Verificación post-init:
+
+Elasticsearch:
+✓ curl http://localhost:9200/_cluster/health
+  Respuesta: {"status":"green",...}
+
+✓ curl http://localhost:9200/_cat/indices
+  Respuesta: green open laravel-logs-000001 ...
+
+Kibana:
+✓ Acceso: http://localhost:5602
+  Estado: "Welcome home" (Home screen)
+  
+✓ Index patterns: Esperar carga completa (puede tardar 1-2 min después)
+  Menú: Stack Management → Index Patterns → laravel-logs-pattern
+
+Logstash:
+✓ Logs: docker logs transcendence_logstash
+  Última línea: "Pipeline started"
+
+Backend:
+✓ Logs: docker logs transcendence_backend
+  Última línea: "ready to handle connections"
+
+
+9. COMANDOS ÚTILES Y DEBUGGING
+================================================================================
+
+VERIFICACIÓN DE ESTADO:
+
+1) Elasticsearch Health:
+   curl http://localhost:9200/_cluster/health
+   Respuesta esperada: {"status":"green","number_of_nodes":1,...}
+
+2) Elasticsearch Indices:
+   curl http://localhost:9200/_cat/indices
+   Respuesta: "green open laravel-logs-000001 ..."
+
+3) Elasticsearch ILM Policy:
+   curl http://localhost:9200/_ilm/policy/laravel-logs-policy
+   Respuesta: {"laravel-logs-policy":{"version":1,"modified_date":...}}
+
+4) Elasticsearch Index Template:
+   curl http://localhost:9200/_index_template/laravel-logs-template
+   Respuesta: {"index_templates":[{"name":"laravel-logs-template",...}]}
+
+5) Count de logs (documentos):
+   curl http://localhost:9200/laravel-logs-000001/_count
+   Respuesta: {"count":0,"_shards":{...}}
+   Nota: count=0 es normal hasta que Laravel genere logs
+
+6) Kibana Status:
+   curl http://localhost:5602/api/status
+   Respuesta: {"state":"green",...}  # o "yellow" si inicializando
+
+7) Ver logs del contenedor Logstash:
+   docker logs transcendence_logstash
+   docker logs -f transcendence_logstash (follow mode)
+
+8) Ver logs del contenedor Elasticsearch:
+   docker logs transcendence_elasticsearch | tail -50
+
+9) Ver logs del contenedor Kibana:
+   docker logs transcendence_kibana | tail -50
+
+10) Ejecutar comando en Elasticsearch:
+    docker exec transcendence_elasticsearch curl http://localhost:9200/
+
+
+MANTENIMIENTO:
+
+1) Reiniciar servicios ELK:
+   docker restart transcendence_elasticsearch
+   docker restart transcendence_logstash
+   docker restart transcendence_kibana
+
+2) Ver uso de espacio (Elasticsearch):
+   curl http://localhost:9200/_cat/allocation
+   Muestra: Shard count, almacenamiento usado
+
+3) Ver configuración de Elasticsearch:
+   curl http://localhost:9200/_nodes/settings
+
+4) Limpiar índices viejos (manual):
+   curl -X DELETE http://localhost:9200/laravel-logs-YYYYMMDD
+
+5) Ver estadísticas de índice:
+   curl http://localhost:9200/laravel-logs-000001/_stats
+
+6) Listar patrones de índice en Kibana:
+   curl http://localhost:5602/api/saved_objects/index-pattern
+   (sin autenticación, ya que security disabled)
+
+
+ENVÍO MANUAL DE LOGS (para testing):
+
+1) Enviar JSON a Logstash (netcat):
+   echo '{"message":"test","level":"info"}' | nc localhost 5000
+
+2) Generar log desde Laravel (en contenedor):
+   docker exec transcendence_backend php artisan tinker
+   > Log::info('Test message', ['key' => 'value']);
+
+3) Hacer solicitud HTTP que genere log en Laravel:
+   curl -k https://localhost/api/status
+   (Puede generar log de request/response si configurado)
+
+
+TROUBLESHOOTING:
+
+Problema: Logstash no procesa logs
+Solución:
+  1. Verificar conectividad: docker exec transcendence_logstash curl http://elasticsearch:9200
+  2. Revisar configuración: docker exec transcendence_logstash cat /usr/share/logstash/pipeline/logstash.conf
+  3. Ver logs: docker logs transcendence_logstash | grep -i error
+
+Problema: Kibana no muestra índices
+Solución:
+  1. Esperar a que Kibana se inicialice completamente (2-3 min)
+  2. Refrescar página: Ctrl+F5
+  3. Crear manualmente patrón: Stack Management → Index Patterns → Create
+  4. Buscar patrón: laravel-logs-*
+
+Problema: Logs no llegan a Elasticsearch
+Solución:
+  1. Verificar SocketHandler conecta: docker logs transcendence_backend
+  2. Verificar puerto Logstash: docker port transcendence_logstash | grep 5000
+  3. Verificar red Docker: docker network inspect transcendence_net
+  4. Re-crear índice: curl -X PUT http://localhost:9200/laravel-logs-000001
+
+Problema: Elasticsearch usa mucho espacio
+Solución:
+  1. Revisar ILM policy phases (archivado automático)
+  2. Eliminar índices manuales: curl -X DELETE http://localhost:9200/laravel-logs-old*
+  3. Aumentar fase DELETE en ilm_policy.json si necesario
+
+
+
+11. RESUMEN DE CAMBIOS MÍNIMOS
+================================================================================
+
+Para añadir ELK a un proyecto Laravel existente, requiere:
+
+PASO 1: Crear estructura infra/logging/
+  - 5 archivos nuevos: docker-compose.prod.yml, create_resources.sh, 
+    ilm_policy.json, index_template.json, logstash.conf
+
+PASO 2: Modificar Makefile
+  - 2 líneas en target "up": añadir -f infra/logging/docker-compose.prod.yml
+  - 1 nuevo target: logs-init (10 líneas)
+
+PASO 3: Modificar backend/.env
+  - 1 línea: LOG_CHANNEL=logstash (en lugar de LOG_CHANNEL=emergency/single/etc)
+
+PASO 4: Crear docs/logs.txt
+  - Este archivo (documentación)
+
+TOTAL: 9 archivos nuevos, 3 modificados, ~500 líneas de cambios
+TIEMPO IMPLEMENTACIÓN: 1-2 horas (debugging de problemas de red incluido)
+COMPLEJIDAD: Media (manejo de Docker networking, ILM policies)
+
+
+12. BENEFICIOS Y CASOS DE USO
+================================================================================
+
+BENEFICIO 1: Centralización de logs
+────────────────────────────────────
+Problema: Logs esparcidos en múltiples contenedores
+Solución: Todos en Elasticsearch, accesibles desde Kibana
+Impacto: Debugging 10x más rápido, análisis de tendencias
+
+
+BENEFICIO 2: Búsqueda avanzada
+──────────────────────────────
+Problema: grep/tail limitado, sin contexto
+Solución: Búsquedas Lucene/JSON en Elasticsearch
+Impacto: Encontrar problemas por palabra clave, rango de fecha, nivel, etc.
+
+
+BENEFICIO 3: Retención automática
+──────────────────────────────────
+Problema: Logs crecen indefinidamente
+Solución: ILM Policy con fases HOT/WARM/COLD/DELETE
+Impacto: Control automático de almacenamiento
+
+
+BENEFICIO 4: Visualización en tiempo real
+──────────────────────────────────────────
+Problema: Logs son text, difícil ver patrones
+Solución: Dashboards Kibana con gráficos, alertas
+Impacto: Monitoreo visual de health, detección de anomalías
+
+
+BENEFICIO 5: Escalabilidad
+───────────────────────────
+Problema: Un servidor, logs limitados
+Solución: Elasticsearch cluster, múltiples nodos
+Impacto: Crece con la aplicación, desde 1 servidor a 100+
+
+
+CASOS DE USO PRÓXIMOS:
+
+1) Alertas en tiempo real
+   Crear alertas si nivel=ERROR 10+ veces en 5 minutos
+   Notificar via Slack, Email, PagerDuty
+
+2) Dashboards de SLA
+   Visualizar % de requests exitosos
+   Monitorear latencia promedio
+   Detectar degradación de performance
+
+3) Análisis de comportamiento de usuarios
+   Logs con user_id, event_type
+   Dashboard: Usuarios activos, acciones más comunes
+   Correlacionar con cambios de código
+
+4) Auditoría y compliance
+   Logs inmutables en Elasticsearch
+   Crear dashboards de accesos, cambios, eliminaciones
+   Cumplir con GDPR/HIPAA/SOC2
+
+
+
+14. CONTACTO Y REFERENCIAS
+================================================================================
+
+Versiones utilizadas:
+- Elasticsearch: 8.10.2
+- Kibana: 8.10.2
+- Logstash: 8.10.2
+- Docker: Versión actual (buildkit habilitado)
+- Docker Compose: v3.8+
+
+Documentación oficial:
+- Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/8.10/
+- Kibana: https://www.elastic.co/guide/en/kibana/8.10/
+- Logstash: https://www.elastic.co/guide/en/logstash/8.10/
+
+ILM (Index Lifecycle Management):
+- https://www.elastic.co/guide/en/elasticsearch/reference/8.10/index-lifecycle-management.html
+
+Logstash Pipeline Config:
+- https://www.elastic.co/guide/en/logstash/8.10/configuration.html
+
+Monolog (Logger de Laravel):
+- https://github.com/laravel/laravel/blob/master/config/logging.php
+
+
+================================================================================
+FIN DE LA DOCUMENTACIÓN ELK
+Versión: 2.0
+Fecha actualización: 2026-07-02
+Autor: Sistema Transcendence
+================================================================================
+
+
+================================================================================
+15. EVENTOS LOGUEADOS - REFERENCIA COMPLETA
+================================================================================
+
+Todos los eventos que llegan a Elasticsearch/Kibana una vez el sistema está en marcha:
+
+┌─────────────────────────────────┬─────────┬───────────────────────────────────┐
+│ message                         │ level   │ campos context                    │
+├─────────────────────────────────┼─────────┼───────────────────────────────────┤
+│ login.success                   │ INFO    │ user_id, nick, ip                 │
+│ login.failed                    │ WARNING │ email, ip                         │
+│ logout                          │ INFO    │ user_id, nick, ip                 │
+│ user.registered                 │ INFO    │ user_id, nick, email              │
+│ user.deleted                    │ WARNING │ user_id, nick                     │
+│ user.password_changed           │ WARNING │ user_id, nick                     │
+│ password.recovery_requested     │ WARNING │ email, ip                         │
+│ password.recovery_verified      │ INFO    │ email, ip                         │
+│ password.recovery_failed        │ WARNING │ email, ip                         │
+│ health.degraded                 │ ERROR   │ checks (bd, cache, storage)       │
+│ exception.unhandled             │ ERROR   │ exception, message, file, line    │
+└─────────────────────────────────┴─────────┴───────────────────────────────────┘
+
+Archivos fuente:
+  AuthController.php   → login.success, login.failed, logout
+  UserController.php   → user.registered, user.deleted, user.password_changed
+  MailController.php   → password.recovery_*
+  HealthController.php → health.degraded
+  bootstrap/app.php    → exception.unhandled (handler global)
+
+
+================================================================================
+16. CÓMO VER LOS LOGS EN KIBANA
+================================================================================
+
+URL: http://localhost:5601
+
+PASO 1 - ACCEDER A DISCOVER
+────────────────────────────
+  1. Abrir http://localhost:5602
+  2. Menú izquierdo → icono de brújula "Discover"
+     (o ir directamente a http://localhost:5602/app/discover)
+  3. Si pide crear data view:
+     - Name: laravel-logs
+     - Index pattern: laravel-logs-*
+     - Timestamp field: @timestamp
+     - Pulsar "Save data view to Kibana"
+
+
+PASO 2 - VER LOGS EN TIEMPO REAL
+──────────────────────────────────
+  • El panel muestra los últimos 15 minutos por defecto
+  • Cambiar rango de tiempo: selector arriba a la derecha (ej: "Last 1 hour")
+  • Activar auto-refresh: icono de reloj → cada 10s
+  • Los campos disponibles en el panel izquierdo: message, level, context.*
+
+
+PASO 3 - FILTRAR POR TIPO DE EVENTO
+─────────────────────────────────────
+  Buscar en la barra superior (KQL - Kibana Query Language):
+
+  Ver solo errores y warnings:
+    level: "ERROR" or level: "WARNING"
+
+  Ver solo fallos de login (posible fuerza bruta):
+    message: "login.failed"
+
+  Ver actividad de un usuario concreto:
+    context.user_id: 5
+
+  Ver eventos de seguridad desde una IP:
+    context.ip: "192.168.1.100"
+
+  Ver todos los eventos de recuperación de contraseña:
+    message: password.recovery*
+
+  Ver excepciones no controladas:
+    message: "exception.unhandled"
+
+
+PASO 4 - VERIFICAR QUE LLEGAN LOGS (desde terminal)
+─────────────────────────────────────────────────────
+  # Contar documentos en Elasticsearch (desde dentro del contenedor):
+  docker exec transcendence_elasticsearch curl -s http://localhost:9200/laravel-logs-000001/_count
+
+  # Generar un log de prueba manualmente:
+  docker exec transcendence_backend php artisan tinker --execute="Log::info('test', ['ts' => now()]);"
+
+  # Ver logs procesados por Logstash en tiempo real:
+  docker logs -f transcendence_logstash 2>&1 | grep -v monitoring
+
+
+NOTAS IMPORTANTES
+──────────────────
+  • El puerto 9200 (Elasticsearch) NO está expuesto al host, solo accesible
+    entre contenedores. Usar docker exec para consultas directas.
+  • Kibana tarda 2-3 minutos en el primer arranque. Es normal.
+  • Si Kibana no muestra el patrón laravel-logs-*, ejecutar:
+      make logs-init
+    (re-crea el patrón sin tocar los datos existentes)
+  • Los logs se retienen 365 días (configurable en ilm_policy.json)
