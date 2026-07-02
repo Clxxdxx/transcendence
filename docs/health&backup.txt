@@ -1,0 +1,32 @@
+Implementación: Health check y Backups (Minor)
+
+Resumen
+- Se ha implementado un sistema mínimo de comprobación de estado y un sistema de copias de seguridad/recuperación para cubrir el módulo "Minor" del proyecto.
+
+Endpoints y páginas
+- `GET /api/health` (JSON): devuelve el estado general (`status`: "ok" o "degraded") y comprobaciones individuales para `app`, `database`, `cache`, `storage`. Incluye `last_backup: "ok"` y `last_backup_time` (ISO) si existe al menos un backup, o `null` si no.
+- `GET /status` (HTML): página humana que muestra las comprobaciones y ayuda a los evaluadores/operaciones.
+
+Comandos de artisan
+- `php artisan backup:run {--retention=7}`: crea un archivo tar.gz en `storage/app/private/backups` que incluye `storage/app/public` y `database/database.sqlite` (si existe). Si `DB_CONNECTION=mysql` intentará crear `db.sql` usando `mysqldump`.
+- `php artisan backup:restore {file} {--force}`: restaura `storage/app/public` y `database/database.sqlite` (respeta `--force` para sobrescribir). Si el backup incluye `db.sql`, intentará importarlo con el cliente `mysql`.
+
+Scheduler y automatización
+- La tarea `backup:run` está programada en `Kernel.php` con cron `0 */6 * * *` (cada 6 horas: 00:00, 06:00, 12:00, 18:00).
+- Añadido servicio `scheduler` en `docker-compose.yml` que ejecuta `php artisan schedule:run` cada minuto para que Laravel evalúe y dispare las tareas programadas de forma robusta.
+
+Docker y builds
+- Añadido `backend/.dockerignore` para excluir `storage`, `vendor`, `node_modules`, `.env`, etc., evitando problemas de permisos y reduciendo el contexto de build.
+- `nginx/conf.d/default.conf` actualizado para que `/status` sea servido por Laravel (prioridad sobre proxy al frontend).
+
+Seguridad y decisiones
+- Por seguridad, la API no expone nombres de fichero de backups. `last_backup` devuelve solo "ok" o `null`; `last_backup_time` proporciona la fecha ISO del último backup.
+- Los binarios `mysqldump`/`mysql` deben estar disponibles en el contenedor si se desea soporte MySQL automático; alternativamente ejecutar dumps desde el contenedor `db`.
+
+Comprobaciones y uso
+- Levantar servicios: `docker compose up -d --build`.
+- Iniciar scheduler: `docker compose up -d --build scheduler` (si no se usa, se puede ejecutar `php artisan schedule:run` desde cron en host).
+- Probar health: `curl -k https://localhost/api/health | jq`.
+- Ejecutar backup manual: `docker compose exec backend php artisan backup:run --retention=7`.
+- Restaurar backup: `docker compose exec backend php artisan backup:restore <archivo.tar.gz> --force`.
+

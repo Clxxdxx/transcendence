@@ -67,6 +67,8 @@ services:
     volumes:
       - ./backend:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
+    secrets:
+      - kibana_htpasswd
     depends_on:
       - backend
       - frontend
@@ -123,3 +125,7 @@ networks:
 
 volumes:
   db_data:
+
+secrets:
+  kibana_htpasswd:
+    file: ./secrets/kibana_htpasswd
