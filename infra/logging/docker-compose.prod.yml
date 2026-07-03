@@ -33,8 +33,22 @@ services:
       - SERVER_NAME=kibana
       - SERVER_HOST=0.0.0.0
       - SERVER_PORT=5601
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - DATA_SEARCH_SESSIONS_ENABLED=false
+      - NEWSFEED_ENABLED=false
+      - TELEMETRY_ENABLED=false
+      - XPACK_SECURITY_ENCRYPTIONKEY=Tu6T4No21BGRPatAoy8vUiPaY32Upn7k
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=AQ2xK5LpGtFh689E6kfNf3GWhBC1FZUx
+      - XPACK_REPORTING_ENCRYPTIONKEY=5VAhrmnaxZ2CfTJJz3dllaSKfoGNIqLQ
 
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:5601/kibana/api/status | grep -q '\"available\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
     depends_on:
       elasticsearch:
         condition: service_healthy

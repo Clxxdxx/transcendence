@@ -178,9 +178,9 @@ LOG_LEVEL=debug
 
 ```yaml
 kibana:
-  # ✅ Accesible en puerto 5602
+  # ✅ Accesible en puerto 5601
   ports:
-    - "5602:5602"
+    - "5601:5601"
 
 elasticsearch:
   # ✅ NO expuesto externamente
@@ -193,7 +193,7 @@ elasticsearch:
 
 | Componente | Desarrollo | Producción | Estado |
 |-----------|-----------|-----------|--------|
-| **Kibana** | Puerto 5602 (público) | Puerto 5602 + Auth | ✅ |
+| **Kibana** | Puerto 5601 (público) | Puerto 5601 + Auth | ✅ |
 | **Elasticsearch** | No expuesto | No expuesto | ✅ |
 | **Logstash** | TCP 5000 interno | TCP 5000 interno | ✅ |
 | **/api/health** | Público, sin datos sensibles | Público, sin datos sensibles | ✅ |

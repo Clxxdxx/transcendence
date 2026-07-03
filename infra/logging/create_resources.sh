@@ -42,7 +42,7 @@ fi
 # wait for Kibana to be truly ready (status = available)
 echo "Waiting for Kibana API to be ready..."
 attempt=0
-until curl -s "$KIBANA_HOST/api/status" | grep -q '"available"'; do
+until curl -s "$KIBANA_HOST/kibana/api/status" | grep -q '"available"'; do
   attempt=$((attempt + 1))
   if [ $attempt -gt 90 ]; then
     echo "Warning: Kibana not available after 90 attempts, continuing anyway..."
@@ -54,7 +54,7 @@ done
 
 # create index pattern in Kibana (with error handling)
 echo "Creating Kibana index pattern..."
-curl -s -X POST "$KIBANA_HOST/api/saved_objects/index-pattern/laravel-logs-pattern" \
+curl -s -X POST "$KIBANA_HOST/kibana/api/saved_objects/index-pattern/laravel-logs-pattern" \
   -H 'kbn-xsrf: true' \
   -H 'Content-Type: application/json' \
   -d '{"attributes":{"title":"laravel-logs-*","timeFieldName":"@timestamp"}}' || echo "Warning: Could not create index pattern in Kibana"
