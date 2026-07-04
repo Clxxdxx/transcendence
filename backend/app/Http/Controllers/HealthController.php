@@ -43,7 +43,7 @@ class HealthController extends Controller
 
         // Last backup info
         try {
-            $backupFiles = Storage::disk('local')->files('private/backups');
+            $backupFiles = Storage::disk('local')->files('backups');
             $latest = null;
             $latestTime = null;
 
