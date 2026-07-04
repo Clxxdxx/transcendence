@@ -17,8 +17,18 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-s
 # Copiamos el resto del código (aquí ya entra 'artisan')
 COPY . .
 
+# Crear directorios de runtime que storage/ excluye del build context
+RUN mkdir -p /var/www/html/storage/app/private/backups \
+             /var/www/html/storage/app/public \
+             /var/www/html/storage/framework/cache \
+             /var/www/html/storage/framework/sessions \
+             /var/www/html/storage/framework/views \
+             /var/www/html/storage/logs \
+             /var/www/html/bootstrap/cache
+
 # Ajuste de permisos (importante para Laravel)
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 9000
 
