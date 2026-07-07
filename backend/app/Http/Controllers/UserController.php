@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Stat;
 use Illuminate\Http\JsonResponse;
@@ -43,6 +44,11 @@ class UserController extends Controller
             'points' => 0,
         ]);
 
+        Log::info('user.registered', [
+            'user_id' => $user->id_user,
+            'nick'    => $user->nick,
+            'email'   => $user->email,
+        ]);
         return response()->json([
             'message' => "User created successfully",
             'user' => $user
@@ -91,6 +97,10 @@ class UserController extends Controller
             ], 404);
         }
 
+        Log::warning('user.deleted', [
+            'user_id' => $user->id_user,
+            'nick'    => $user->nick,
+        ]);
         $user->delete();
 
         return response()->json([
@@ -134,6 +144,10 @@ class UserController extends Controller
 
         $user->update([
             'password' => Hash::make($validated['password'])
+        ]);
+        Log::warning('user.password_changed', [
+            'user_id' => $user->id_user,
+            'nick'    => $user->nick,
         ]);
 
         return response()->json([

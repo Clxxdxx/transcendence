@@ -1,0 +1,75 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    container_name: transcendence_elasticsearch
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - cluster.name=transcendence-es
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=${ES_JAVA_OPTS:--Xms1g -Xmx1g}
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    networks:
+      - transcendence_net
+    # NO EXPONER PUERTO 9200 - Solo accesible internamente desde Logstash/Kibana
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.2
+    container_name: transcendence_kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=5601
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - DATA_SEARCH_SESSIONS_ENABLED=false
+      - NEWSFEED_ENABLED=false
+      - TELEMETRY_ENABLED=false
+      - XPACK_SECURITY_ENCRYPTIONKEY=Tu6T4No21BGRPatAoy8vUiPaY32Upn7k
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=AQ2xK5LpGtFh689E6kfNf3GWhBC1FZUx
+      - XPACK_REPORTING_ENCRYPTIONKEY=5VAhrmnaxZ2CfTJJz3dllaSKfoGNIqLQ
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:5601/kibana/api/status | grep -q '\"available\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_net
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.10.2
+    container_name: transcendence_logstash
+    volumes:
+      - ./infra/logging/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch:9200
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+    networks:
+      - transcendence_net
+
+volumes:
+  esdata:
+    name: transcendence_esdata

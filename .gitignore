@@ -12,3 +12,4 @@ frontend/dist/
 nginx/ssl/
 
 .DS_Store
+secrets/
