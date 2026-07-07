@@ -1,0 +1,567 @@
+================================================================================
+DOCUMENTACIÓN COMPLETA - SISTEMA DE HEALTH CHECK Y BACKUPS
+Proyecto: Transcendence
+Fecha última actualización: 2026-07-04
+================================================================================
+
+ÍNDICE
+------
+  1.  Introducción y arquitectura
+  2.  Diagrama de flujo
+  3.  Archivos creados y modificados
+  4.  API de Health Check: GET /api/health
+  5.  Página de estado: GET /status
+  6.  Comando backup:run
+  7.  Comando backup:restore
+  8.  Scheduler automático
+  9.  Integración con el sistema de logs (ELK)
+ 10.  Comandos útiles y ejemplos
+ 11.  Troubleshooting
+ 12.  Resumen de cambios
+ 13.  Referencias
+
+
+================================================================================
+1. INTRODUCCIÓN Y ARQUITECTURA
+================================================================================
+
+Se ha implementado un sistema de Health Check y Backups como módulo "Minor"
+del proyecto. Permite:
+
+  ✓ Verificar en tiempo real el estado de la aplicación (BD, caché, storage)
+  ✓ Conocer cuándo fue el último backup y si existe alguno
+  ✓ Crear backups automáticamente cada 6 horas vía scheduler
+  ✓ Crear backups manualmente bajo demanda
+  ✓ Restaurar backups con un solo comando
+  ✓ Aplicar política de retención (borrar backups más antiguos de N días)
+  ✓ Emitir logs de alerta a ELK cuando el sistema está degradado
+
+COMPONENTES:
+  - HealthController.php     → lógica de checks y respuestas HTTP
+  - BackupRun.php            → comando artisan para crear backups
+  - BackupRestore.php        → comando artisan para restaurar backups
+  - Kernel.php               → registro y programación de comandos
+  - status.blade.php         → vista HTML de estado del sistema
+  - docker-compose.yml       → servicio scheduler independiente
+  - nginx/conf.d/default.conf→ enrutamiento de /api/health y /status a Laravel
+
+
+================================================================================
+2. DIAGRAMA DE FLUJO
+================================================================================
+
+HEALTH CHECK:
+  ┌──────────────┐   GET /api/health    ┌─────────────────────┐
+  │   Cliente    │ ──────────────────→  │  Nginx (SSL :443)   │
+  │ (curl/etc.)  │ ←──────────────────  │  location ^/(api|…) │
+  └──────────────┘   JSON 200/503       └──────────┬──────────┘
+                                                   │ fastcgi_pass
+                                                   ↓
+                                        ┌─────────────────────┐
+                                        │  Laravel backend    │
+                                        │  HealthController   │
+                                        │  - check DB         │
+                                        │  - check Cache      │
+                                        │  - check Storage    │
+                                        │  - check last backup│
+                                        └──────────┬──────────┘
+                                                   │ si degraded
+                                                   ↓
+                                        ┌─────────────────────┐
+                                        │  Log::error(        │
+                                        │  'health.degraded') │
+                                        │  → Logstash → ES    │
+                                        └─────────────────────┘
+
+BACKUP AUTOMÁTICO:
+  ┌──────────────────────────────────────────────────────────┐
+  │  transcendence_scheduler container                       │
+  │  (bucle: sleep 60 → php artisan schedule:run → repeat)  │
+  └──────────────────────────┬───────────────────────────────┘
+                             │ cada hora Kernel evalúa cron
+                             │ cron: 0 */6 * * *
+                             ↓ (a las 00:00, 06:00, 12:00, 18:00)
+  ┌──────────────────────────────────────────────────────────┐
+  │  php artisan backup:run --retention=7                    │
+  │  1. Copia storage/app/public → tmpDir/public/            │
+  │  2. Copia database.sqlite    → tmpDir/database.sqlite    │
+  │  3. (MySQL) ejecuta mysqldump → tmpDir/db.sql            │
+  │  4. tar -czf backup_YYYYMMDD_HHmmss.tar.gz               │
+  │  5. Mueve a storage/app/private/backups/                 │
+  │  6. Elimina backups > 7 días                             │
+  └──────────────────────────────────────────────────────────┘
+
+
+================================================================================
+3. ARCHIVOS CREADOS Y MODIFICADOS
+================================================================================
+
+3.1 ARCHIVOS NUEVOS
+───────────────────
+
+  backend/app/Http/Controllers/HealthController.php
+  backend/app/Console/Commands/BackupRun.php
+  backend/app/Console/Commands/BackupRestore.php
+  backend/resources/views/status.blade.php
+
+
+3.2 ARCHIVOS MODIFICADOS
+─────────────────────────
+
+  1) backend/app/Console/Kernel.php
+     ────────────────────────────────
+     - Registrados los comandos BackupRun y BackupRestore en $commands[]
+     - Añadida tarea programada en schedule():
+         $schedule->command('backup:run --retention=7')->cron('0 */6 * * *');
+       Esto programa el backup cada 6 horas (00:00, 06:00, 12:00, 18:00).
+
+  2) backend/routes/api.php
+     ──────────────────────
+     - use App\Http\Controllers\HealthController;
+     - Route::get('/health', [HealthController::class, 'health']);
+       Accesible en: https://localhost/api/health
+
+  3) backend/routes/web.php
+     ──────────────────────
+     - use App\Http\Controllers\HealthController;
+     - Route::get('/status', [HealthController::class, 'statusPage']);
+       Accesible en: https://localhost/status
+
+  4) nginx/conf.d/default.conf
+     ──────────────────────────
+     - Añadido /status a la location que enruta a Laravel:
+         location ~ ^/(up|api|sanctum|storage|status) {
+             try_files $uri $uri/ /index.php?$query_string;
+         }
+       Sin esto, /status sería capturado por el proxy al frontend Angular.
+
+  5) docker-compose.yml
+     ───────────────────
+     Añadido servicio scheduler:
+
+       scheduler:
+         build:
+           context: ./backend
+           dockerfile: Dockerfile
+         container_name: transcendence_scheduler
+         restart: always
+         volumes:
+           - ./backend:/var/www/html
+         command: sh -c "while true; do
+             php /var/www/html/artisan schedule:run --verbose --no-interaction;
+             sleep 60;
+           done"
+         depends_on:
+           db:
+             condition: service_healthy
+         networks:
+           - transcendence_net
+
+     Nota: Laravel requiere que `schedule:run` se ejecute cada minuto para
+     evaluar qué tareas deben dispararse. El bucle `while true; sleep 60`
+     es la forma recomendada sin cron del sistema en Docker.
+
+
+================================================================================
+4. API DE HEALTH CHECK: GET /api/health
+================================================================================
+
+RUTA: GET https://localhost/api/health
+CONTROLADOR: app/Http/Controllers/HealthController.php → método health()
+SIN AUTENTICACIÓN (público, para monitoreo externo)
+
+CHECKS QUE REALIZA:
+  1. app      → siempre "ok" (si el proceso responde, la app está viva)
+  2. database → intenta obtener una conexión PDO. "ok" / "error" + mensaje
+  3. cache    → escribe y lee una clave temporal con TTL 10s. "ok" / "error"
+  4. storage  → escribe y borra un fichero temporal en private/. "ok" / "error"
+  5. last_backup → busca en storage/app/private/backups/ el fichero más
+                   reciente. Devuelve "ok" si existe, null si no hay ninguno.
+  6. last_backup_time → timestamp ISO 8601 del backup más reciente, o null.
+
+RESPUESTA HTTP:
+  - 200 OK       si todos los checks son "ok"
+  - 503 Service Unavailable si algún check es "error"
+
+ESTRUCTURA JSON:
+  {
+    "status": "ok",                         ← "ok" o "degraded"
+    "checks": {
+      "app": "ok",
+      "database": "ok",
+      "cache": "ok",
+      "storage": "ok",
+      "last_backup": "ok",                  ← "ok" o null
+      "last_backup_time": "2026-07-04T06:00:00+00:00"  ← ISO o null
+    }
+  }
+
+SEGURIDAD:
+  - No expone el nombre del fichero de backup (previene enumeración de archivos)
+  - No expone rutas internas del servidor
+  - database_error solo se incluye en checks si la BD falla (para debugging)
+
+LÓGICA DE BÚSQUEDA DE BACKUP:
+  1. Primero intenta con Storage::disk('local')->files('private/backups')
+  2. Si no encuentra nada, fallback directo con glob() sobre el filesystem
+     (útil cuando hay diferencias de permisos entre el disco Laravel y el
+     sistema de ficheros real del contenedor)
+  3. Compara lastModified() de cada fichero para encontrar el más reciente
+
+
+================================================================================
+5. PÁGINA DE ESTADO: GET /status
+================================================================================
+
+RUTA: GET https://localhost/status
+CONTROLADOR: app/Http/Controllers/HealthController.php → método statusPage()
+VISTA: backend/resources/views/status.blade.php
+
+Llama internamente al método health() y pasa los datos a la vista Blade.
+
+CONTENIDO DE LA PÁGINA HTML:
+  - Título: "Estado del sistema"
+  - Estado general en verde (ok) o rojo (degraded)
+  - Lista de todas las comprobaciones con código de color:
+    verde = "ok", rojo = cualquier otro valor
+
+ESTRUCTURA DE LA VISTA:
+  - HTML minimalista, sin frameworks externos
+  - CSS inline: .ok { color: green } / .error { color: red }
+  - Renderiza checks con @foreach, los valores array como JSON en <pre>
+
+USO TÍPICO:
+  - Evaluadores del proyecto: ver en un vistazo si todo funciona
+  - Operaciones: verificación rápida antes/después de deploys
+  - Monitoring externo: scraping de la página o del JSON /api/health
+
+
+================================================================================
+6. COMANDO backup:run
+================================================================================
+
+COMANDO: php artisan backup:run {--retention=7}
+ARCHIVO: backend/app/Console/Commands/BackupRun.php
+DESCRIPCIÓN: Crea un backup completo y aplica política de retención
+
+PARÁMETROS:
+  --retention=N   días que se conservan los backups (por defecto: 7)
+
+FLUJO DE EJECUCIÓN:
+  1. Genera nombre: backup_YYYYMMDD_HHmmss.tar.gz
+  2. Crea directorio temporal: storage/app/private/backups/tmp_TIMESTAMP/
+  3. Copia storage/app/public/ → tmpDir/public/   (si existe)
+  4. Copia database/database.sqlite → tmpDir/database.sqlite  (si existe)
+  5. Si DB_CONNECTION=mysql:
+     a. Localiza mysqldump con which mysqldump
+     b. Construye el comando con host/port/user/pass/db del config
+     c. Ejecuta y guarda en tmpDir/db.sql
+     d. Si mysqldump no está en PATH: loguea error y omite el dump
+  6. Empaqueta: tar -czf ../backup_TIMESTAMP.tar.gz . (desde tmpDir)
+  7. Mueve el .tar.gz a storage/app/private/backups/
+  8. Borra tmpDir
+  9. Aplica retención: borra ficheros backup_* con lastModified > N días
+
+CONTENIDO DEL ARCHIVO .tar.gz:
+  backup_20260704_060000.tar.gz
+  ├── public/          ← copia de storage/app/public/
+  ├── database.sqlite  ← copia de database/database.sqlite (si existe)
+  └── db.sql           ← dump MySQL (solo si DB_CONNECTION=mysql y mysqldump disponible)
+
+RUTA DE ALMACENAMIENTO:
+  storage/app/private/backups/backup_YYYYMMDD_HHmmss.tar.gz
+  (privado, no accesible vía URL pública de Laravel Storage)
+
+NOTA SOBRE MYSQL:
+  Si el proyecto usa MySQL y se quiere soporte automático de dumps, el
+  binario mysqldump debe estar instalado en el contenedor backend.
+  Alternativa: ejecutar el dump manualmente desde el contenedor db:
+    docker exec transcendence_db mysqldump -u USER -pPASS DB > dump.sql
+
+
+================================================================================
+7. COMANDO backup:restore
+================================================================================
+
+COMANDO: php artisan backup:restore {file} {--force}
+ARCHIVO: backend/app/Console/Commands/BackupRestore.php
+DESCRIPCIÓN: Restaura un backup previamente creado con backup:run
+
+PARÁMETROS:
+  file      nombre del fichero .tar.gz (sin ruta, solo el nombre)
+  --force   sobrescribe sin renombrar el fichero actual a .old_TIMESTAMP
+
+FLUJO DE EJECUCIÓN:
+  1. Construye ruta completa: storage/app/private/backups/{file}
+  2. Verifica que el fichero existe (error si no)
+  3. Crea directorio temporal: storage/app/private/backups/restore_tmp_UNIQID/
+  4. Extrae el archivo: tar -xzf {file} -C restore_tmp/
+  5. Si existe tmpDir/public/:
+     - Copia recursivamente sobre storage/app/public/
+  6. Si existe tmpDir/database.sqlite:
+     - Sin --force: renombra el .sqlite actual a .old_TIMESTAMP (seguridad)
+     - Con --force: sobrescribe directamente
+     - Copia el .sqlite del backup al destino
+  7. Si existe tmpDir/db.sql y DB_CONNECTION=mysql:
+     - Ejecuta mysql < db.sql con los parámetros de config/database.php
+  8. Borra directorio temporal
+  9. Devuelve exit code 0 (éxito) o 1 (error)
+
+EJEMPLO DE USO:
+  # Ver qué backups existen
+  docker exec transcendence_backend ls storage/app/private/backups/
+
+  # Restaurar sin sobrescribir (deja .old para rollback)
+  docker exec transcendence_backend php artisan backup:restore backup_20260704_060000.tar.gz
+
+  # Restaurar sobrescribiendo
+  docker exec transcendence_backend php artisan backup:restore backup_20260704_060000.tar.gz --force
+
+
+================================================================================
+8. SCHEDULER AUTOMÁTICO
+================================================================================
+
+PROPÓSITO:
+  Ejecutar backup:run automáticamente cada 6 horas sin intervención manual.
+
+CÓMO FUNCIONA LARAVEL SCHEDULER:
+  Laravel no tiene un proceso daemon propio. Requiere que externamente se
+  ejecute `php artisan schedule:run` cada minuto. En cada llamada, Laravel
+  evalúa las tareas definidas en Kernel.php y ejecuta las que correspondan
+  según su expresión cron.
+
+IMPLEMENTACIÓN EN DOCKER:
+  Servicio scheduler en docker-compose.yml con bucle shell:
+    while true; do
+      php /var/www/html/artisan schedule:run --verbose --no-interaction
+      sleep 60
+    done
+
+  Ventajas de este enfoque:
+  ✓ No requiere instalar cron en el contenedor
+  ✓ Funciona con cualquier imagen base (alpine, debian, etc.)
+  ✓ restart: always garantiza que se levanta si el contenedor cae
+  ✓ Mismo Dockerfile que el backend (sin imagen adicional)
+
+CRON CONFIGURADO:
+  $schedule->command('backup:run --retention=7')->cron('0 */6 * * *');
+  Horarios: 00:00, 06:00, 12:00, 18:00 UTC
+
+VERIFICAR QUE EL SCHEDULER ESTÁ ACTIVO:
+  docker ps | grep scheduler
+  docker logs transcendence_scheduler | tail -20
+
+ALTERNATIVA SIN DOCKER SCHEDULER:
+  Si se prefiere no usar el servicio scheduler, añadir al crontab del host:
+    * * * * * docker exec transcendence_backend php artisan schedule:run \
+      --verbose --no-interaction >> /var/log/laravel-schedule.log 2>&1
+
+
+================================================================================
+9. INTEGRACIÓN CON EL SISTEMA DE LOGS (ELK)
+================================================================================
+
+HealthController emite un log de nivel ERROR cuando detecta degradación:
+
+  Log::error('health.degraded', [
+      'checks' => $status,   // mapa completo con el estado de cada check
+  ]);
+
+Este evento:
+  - Se envía al canal logstash (TCP :5000)
+  - Logstash lo procesa y lo indexa en Elasticsearch
+  - Es visible en Kibana Discover con filtro: message: "health.degraded"
+  - Permite crear alertas en Kibana cuando la frecuencia de este evento
+    supere un umbral (indicador de inestabilidad del sistema)
+
+Filtro KQL en Kibana:
+  message: "health.degraded"
+  message: "health.degraded" and context.checks.database: "error"
+  message: "health.degraded" and context.checks.storage: "error"
+
+Ver sección completa de eventos en docs/logs.txt.
+
+
+================================================================================
+10. COMANDOS ÚTILES Y EJEMPLOS
+================================================================================
+
+HEALTH CHECK:
+  # Consultar estado en JSON (desde el host)
+  curl -k https://localhost/api/health
+
+  # Con formato legible
+  curl -sk https://localhost/api/health | python3 -m json.tool
+
+  # Solo el status general
+  curl -sk https://localhost/api/health | python3 -c \
+    "import sys,json; print(json.load(sys.stdin)['status'])"
+
+  # Página HTML
+  curl -sk https://localhost/status
+
+BACKUP MANUAL:
+  # Crear backup con retención por defecto (7 días)
+  docker exec transcendence_backend php artisan backup:run
+
+  # Crear backup con retención personalizada (30 días)
+  docker exec transcendence_backend php artisan backup:run --retention=30
+
+  # Ver backups existentes
+  docker exec transcendence_backend ls -lh storage/app/private/backups/
+
+  # Inspeccionar contenido de un backup
+  docker exec transcendence_backend tar -tzf \
+    storage/app/private/backups/backup_20260704_060000.tar.gz
+
+RESTORE:
+  # Restaurar (guarda .old por seguridad)
+  docker exec transcendence_backend \
+    php artisan backup:restore backup_20260704_060000.tar.gz
+
+  # Restaurar forzando sobrescritura
+  docker exec transcendence_backend \
+    php artisan backup:restore backup_20260704_060000.tar.gz --force
+
+SCHEDULER:
+  # Ver estado del scheduler
+  docker ps --format "table {{.Names}}\t{{.Status}}" | grep scheduler
+
+  # Ver logs del scheduler
+  docker logs transcendence_scheduler
+
+  # Ver últimas ejecuciones
+  docker logs transcendence_scheduler | tail -30
+
+  # Forzar ejecución inmediata del scheduler (fuera del ciclo)
+  docker exec transcendence_scheduler \
+    php /var/www/html/artisan schedule:run --verbose
+
+  # Ejecutar backup directamente sin esperar al scheduler
+  docker exec transcendence_backend php artisan backup:run
+
+  # Listar tareas programadas
+  docker exec transcendence_backend php artisan schedule:list
+
+
+================================================================================
+11. TROUBLESHOOTING
+================================================================================
+
+PROBLEMA: GET /status devuelve página de Angular (o 404)
+  CAUSA: Nginx no tenía /status en la location de Laravel, lo enviaba al proxy
+         del frontend.
+  SOLUCIÓN APLICADA:
+    location ~ ^/(up|api|sanctum|storage|status) {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+  Verificar: curl -sk https://localhost/status | grep "Estado del sistema"
+
+PROBLEMA: /api/health responde "database": "error"
+  CAUSAS POSIBLES:
+  1. El contenedor db aún no está listo (DB_CONNECTION=mysql, MySQL arrancando)
+  2. Credenciales incorrectas en backend/.env (DB_USERNAME, DB_PASSWORD)
+  3. El contenedor backend no tiene acceso a la red del contenedor db
+  DIAGNÓSTICO:
+    docker logs transcendence_backend | tail -20
+    docker exec transcendence_backend php artisan db:show
+    docker inspect transcendence_net
+
+PROBLEMA: /api/health responde "last_backup": null
+  CAUSA: No se ha ejecutado ningún backup todavía, o el backup falló.
+  SOLUCIÓN:
+    docker exec transcendence_backend php artisan backup:run
+    docker exec transcendence_backend ls storage/app/private/backups/
+  Si el directorio está vacío, revisar:
+    docker exec transcendence_backend php artisan backup:run 2>&1
+  (la salida del comando mostrará si hay errores de permisos o de tar)
+
+PROBLEMA: backup:run falla con "Permission denied"
+  CAUSA: El directorio storage/app/ no es escribible por el proceso PHP
+         (www-data o el usuario que corre php-fpm).
+  SOLUCIÓN:
+    docker exec -u root transcendence_backend chown -R www-data:www-data \
+      /var/www/html/storage
+    docker exec transcendence_backend chmod -R 775 /var/www/html/storage
+
+PROBLEMA: El scheduler no ejecuta backups automáticamente
+  VERIFICAR:
+  1. Que el contenedor transcendence_scheduler está corriendo:
+       docker ps | grep scheduler
+  2. Que el comando backup:run está registrado en Kernel.php
+  3. Que el horario cron es correcto (0 */6 * * *):
+       docker exec transcendence_backend php artisan schedule:list
+  4. Ver logs del scheduler para errores:
+       docker logs transcendence_scheduler | grep -i error
+
+PROBLEMA: backup:restore falla con "Backup file not found"
+  CAUSA: Se está pasando una ruta absoluta o relativa incorrecta.
+  El comando espera SOLO el nombre del fichero, sin ruta:
+    INCORRECTO: php artisan backup:restore storage/app/private/backups/backup_X.tar.gz
+    CORRECTO:   php artisan backup:restore backup_20260704_060000.tar.gz
+
+PROBLEMA: mysqldump no se ejecuta en el backup
+  CAUSA: El binario mysqldump no está instalado en el contenedor backend.
+  SOLUCIÓN ALTERNATIVA (dump desde contenedor db):
+    docker exec transcendence_db mysqldump \
+      -u $DB_USERNAME -p$DB_PASSWORD $DB_DATABASE > backup_manual.sql
+
+PROBLEMA: health.degraded aparece en Kibana pero no hay fallo real
+  CAUSA: El check de cache puede fallar si Redis/memcached no está disponible
+         y el driver de cache no está configurado correctamente.
+  VERIFICAR:
+    docker exec transcendence_backend php artisan tinker \
+      --execute="Cache::put('test', 1, 5); var_dump(Cache::get('test'));"
+
+
+================================================================================
+12. RESUMEN DE CAMBIOS
+================================================================================
+
+ARCHIVOS NUEVOS (4):
+  backend/app/Http/Controllers/HealthController.php
+  backend/app/Console/Commands/BackupRun.php
+  backend/app/Console/Commands/BackupRestore.php
+  backend/resources/views/status.blade.php
+
+ARCHIVOS MODIFICADOS (4):
+  backend/app/Console/Kernel.php       ← registra comandos + programa backup
+  backend/routes/api.php               ← Route GET /health
+  backend/routes/web.php               ← Route GET /status
+  nginx/conf.d/default.conf            ← añade /status a location Laravel
+  docker-compose.yml                   ← añade servicio scheduler
+
+COMPORTAMIENTO RESULTANTE:
+  - https://localhost/api/health  → JSON con estado de BD, caché, storage y backup
+  - https://localhost/status      → página HTML con el mismo contenido
+  - Backup automático cada 6h en storage/app/private/backups/
+  - Retención de 7 días (configurable)
+  - Alert en Kibana cuando health.degraded se produce
+
+
+================================================================================
+13. REFERENCIAS
+================================================================================
+
+Laravel Console Scheduling:
+  https://laravel.com/docs/11.x/scheduling
+
+Laravel Artisan Commands:
+  https://laravel.com/docs/11.x/artisan
+
+Laravel Storage:
+  https://laravel.com/docs/11.x/filesystem
+
+Expresiones cron:
+  https://crontab.guru/#0_*/6_*_*_*
+  Expresión usada: 0 */6 * * *  → minuto 0 de cada 6 horas
+
+Docker Compose healthcheck:
+  https://docs.docker.com/compose/compose-file/05-services/#healthcheck
+
+================================================================================
+FIN DE LA DOCUMENTACIÓN HEALTH & BACKUP
+Versión: 2.0
+Fecha: 2026-07-04
+================================================================================

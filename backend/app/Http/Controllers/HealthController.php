@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class HealthController extends Controller
@@ -42,7 +43,7 @@ class HealthController extends Controller
 
         // Last backup info
         try {
-            $backupFiles = Storage::disk('local')->files('private/backups');
+            $backupFiles = Storage::disk('local')->files('backups');
             $latest = null;
             $latestTime = null;
 
@@ -82,6 +83,12 @@ class HealthController extends Controller
         }
 
         $healthy = collect($status)->except('database_error')->contains('error') ? false : true;
+
+        if (!$healthy) {
+            Log::error('health.degraded', [
+                'checks' => $status,
+            ]);
+        }
 
         return response()->json([
             'status' => $healthy ? 'ok' : 'degraded',
