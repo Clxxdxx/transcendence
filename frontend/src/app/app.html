@@ -52,6 +52,10 @@
     <app-pong (close)="onPongClose($event)"></app-pong>
   }
 
+  @if (currentView === 'tic-tac-toe') {
+    <app-tic-tac-toe (close)="onTicTacToeClose($event)"></app-tic-tac-toe>
+  }
+
   @if (currentView === 'leaderboard') {
     <div class="px-[8vw] py-10">
       <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
