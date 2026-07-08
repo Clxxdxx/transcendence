@@ -1,0 +1,34 @@
+<div class="flex flex-col items-center py-8 gap-4">
+  <div class="w-[320px] flex justify-between items-center">
+    <button
+      (click)="exit()"
+      class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
+      ← Volver
+    </button>
+    <span class="text-gray-400 text-sm">Tú eres X</span>
+  </div>
+
+  <div class="grid grid-cols-3 gap-2">
+    @for (cell of board; track $index) {
+      <button
+        (click)="play($index)"
+        [disabled]="gameOver || !!cell"
+        class="w-24 h-24 flex items-center justify-center text-4xl font-bold
+               border border-gray-700 bg-black text-white
+               hover:bg-gray-900 disabled:cursor-default transition-colors">
+        {{ cell }}
+      </button>
+    }
+  </div>
+
+  @if (gameOver) {
+    <div class="flex flex-col items-center gap-3">
+      <span class="text-xl text-cyan-200">{{ message }}</span>
+      <button
+        (click)="restart()"
+        class="px-4 py-2 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors cursor-pointer">
+        Jugar de nuevo
+      </button>
+    </div>
+  }
+</div>

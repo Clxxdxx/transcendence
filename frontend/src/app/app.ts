@@ -18,13 +18,14 @@ import { ChatGlobal } from './components/chat-global/chat-global';
 import { TopPlayers } from './components/top-players/top-players';
 import { ChatService } from './services/chat-global';
 import { Pong } from './components/pong/pong';
+import { TicTacToe } from './components/tic-tac-toe/tic-tac-toe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer,
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
-    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong,
+    Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong, TicTacToe,
     ChatGlobal, TopPlayers],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -114,11 +115,19 @@ export class App implements OnInit{
 
     onPlayVsAi(title: string) {
       if (title === 'Pong') this.currentView = 'pong';
+      if (title === 'Tic-Tac-Toe') this.currentView = 'tic-tac-toe';
     }
 
     onPongClose(result: 'win' | 'loss' | null) {
       this.currentView = 'games';
       if (result === 'win') this.isWinModalOpen = true;
       if (result === 'loss') this.isLossModalOpen = true;
+    }
+
+    onTicTacToeClose(result: 'win' | 'loss' | 'draw' | null) {
+      this.currentView = 'games';
+      if (result === 'win') this.isWinModalOpen = true;
+      if (result === 'loss') this.isLossModalOpen = true;
+      if (result === 'draw') this.isDrawModalOpen = true;
     }
 }
