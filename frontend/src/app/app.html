@@ -56,6 +56,18 @@
     <app-tic-tac-toe (close)="onTicTacToeClose($event)"></app-tic-tac-toe>
   }
 
+  @if (currentView === 'arkanoid') {
+    <app-arkanoid (close)="onArkanoidClose($event)"></app-arkanoid>
+  }
+
+  @if (currentView === 'wordle') {
+    <app-wordle (close)="onWordleClose($event)"></app-wordle>
+  }
+
+  @if (currentView === 'guess-card') {
+    <app-guess-card (close)="onGuessCardClose($event)"></app-guess-card>
+  }
+
   @if (currentView === 'leaderboard') {
     <div class="px-[8vw] py-10">
       <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">

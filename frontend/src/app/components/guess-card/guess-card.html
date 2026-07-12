@@ -1,0 +1,39 @@
+<div class="flex flex-col items-center py-8 gap-4">
+  <div class="w-[300px] flex justify-between items-center">
+    <button
+      (click)="exit()"
+      class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
+      ← Volver
+    </button>
+    <span class="text-gray-400 text-sm">Ronda {{ round }} / {{ rounds }} — Aciertos {{ score }}</span>
+  </div>
+
+  <div class="w-24 h-32 flex items-center justify-center text-4xl font-bold
+              border-2 border-cyan-400 rounded-xl bg-blue-900/40 text-cyan-200">
+    {{ cardName(current) }}
+  </div>
+
+  @if (!gameOver) {
+    <div class="flex gap-4">
+      <button
+        (click)="guess(false)"
+        class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-800 to-indigo-800 border border-blue-500 text-cyan-200 font-semibold hover:brightness-125 transition-all cursor-pointer">
+        Menor
+      </button>
+      <button
+        (click)="guess(true)"
+        class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-cyan-100 font-semibold hover:brightness-110 transition-all cursor-pointer">
+        Mayor
+      </button>
+    </div>
+  } @else {
+    <div class="flex flex-col items-center gap-3">
+      <span class="text-xl text-cyan-200">{{ message }}</span>
+      <button
+        (click)="restart()"
+        class="px-4 py-2 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors cursor-pointer">
+        Jugar de nuevo
+      </button>
+    </div>
+  }
+</div>
