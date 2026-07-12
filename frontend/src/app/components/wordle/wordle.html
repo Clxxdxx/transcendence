@@ -1,0 +1,56 @@
+<div class="flex flex-col items-center py-8 gap-4">
+  <div class="w-[340px] flex justify-between items-center">
+    <button
+      (click)="exit()"
+      class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
+      ← Volver
+    </button>
+    <span class="text-gray-400 text-sm">{{ guesses.length }} / {{ maxGuesses }}</span>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    @for (row of [0,1,2,3,4,5]; track row) {
+      <div class="flex gap-1">
+        @for (col of [0,1,2,3,4]; track col) {
+          <div
+            class="w-12 h-12 flex items-center justify-center text-xl font-bold border border-blue-500/30 text-cyan-200 uppercase"
+            [class.bg-green-600]="guesses[row] && letterState(guesses[row], col) === 'correct'"
+            [class.bg-yellow-600]="guesses[row] && letterState(guesses[row], col) === 'present'"
+            [class.bg-gray-800]="guesses[row] && letterState(guesses[row], col) === 'absent'"
+            [class.border-cyan-400]="row === guesses.length && col < current.length">
+            {{ guesses[row] ? guesses[row][col] : (row === guesses.length ? current[col] : '') }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (gameOver) {
+    <div class="flex flex-col items-center gap-3">
+      <span class="text-xl text-cyan-200">{{ message }}</span>
+      <button
+        (click)="restart()"
+        class="px-4 py-2 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors cursor-pointer">
+        Jugar de nuevo
+      </button>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-1 items-center">
+      @for (line of ['QWERTYUIOP', 'ASDFGHJKLÑ', 'ZXCVBNM']; track line) {
+        <div class="flex gap-1">
+          @for (letter of line.split(''); track letter) {
+            <button
+              (click)="onKey(letter)"
+              class="w-8 h-10 bg-blue-900/40 border border-blue-500/30 hover:bg-blue-800/60 text-cyan-200 text-sm rounded cursor-pointer transition-colors">
+              {{ letter }}
+            </button>
+          }
+        </div>
+      }
+      <div class="flex gap-1 mt-1">
+        <button (click)="onKey('BACK')" class="px-3 h-10 bg-blue-900/40 border border-blue-500/30 hover:bg-blue-800/60 text-cyan-200 text-sm rounded cursor-pointer transition-colors">⌫</button>
+        <button (click)="onKey('ENTER')" class="px-3 h-10 bg-cyan-700 hover:bg-cyan-600 text-cyan-100 text-sm rounded cursor-pointer transition-colors">Enter</button>
+      </div>
+    </div>
+  }
+</div>
