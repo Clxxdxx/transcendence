@@ -110,7 +110,9 @@ export class App implements OnInit{
     }
 
     onLogout(){
-      this.auth.logout();
+      this.auth.logout().subscribe({
+        error: () => {}
+      });
       this.isLoggedIn = false;
       this.currentView = 'games';
       this.chatService.disconnect();

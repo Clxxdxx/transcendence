@@ -55,11 +55,17 @@ export class Auth {
     return localStorage.getItem(this.nick);
   }
 
-  logout(): void {
+  logout(): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.email);
     localStorage.removeItem(this.id);
     localStorage.removeItem(this.nick);
+    return this.http.post(`${this.apiUrl}/logout`, {}, { headers });
   }
 
   isLoggedIn(): boolean {
