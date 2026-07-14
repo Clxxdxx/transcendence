@@ -62,5 +62,11 @@ export class User {
   getRecentActivity(id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/users/recentActivity/${id}`);
   }
+
+  addPoints(id: number, points: number): Observable<any> {
+    const token = localStorage.getItem('auth_token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.post(`${this.apiUrl}/users/${id}/add-points`, { points }, { headers });
+  }
 }
 
