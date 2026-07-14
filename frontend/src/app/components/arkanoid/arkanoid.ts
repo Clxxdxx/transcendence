@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, AfterViewInit, OnDestroy, ApplicationRef } from '@angular/core';
 
 @Component({
   selector: 'app-arkanoid',
@@ -9,15 +9,19 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @Output() close = new EventEmitter<'win' | 'loss' | null>();
 
+  constructor(private appRef: ApplicationRef) {}
+
   private ctx!: CanvasRenderingContext2D;
   private animationId = 0;
+  private lastTime = 0;
 
   private readonly W = 480;
   private readonly H = 600;
   private readonly PW = 80;
   private readonly PH = 12;
-  private readonly SPEED = 6;
+  private readonly SPEED = 360; // px/s
   private readonly BALL_R = 6;
+  private readonly MAX_BALL_VX = 403; // px/s
 
   private readonly ROWS = 5;
   private readonly COLS = 8;
@@ -30,7 +34,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
 
   lives = 3;
   private paddleX = 0;
-  private ball = { x: 0, y: 0, vx: 3, vy: -4 };
+  private ball = { x: 0, y: 0, vx: 202, vy: -269 };
   private bricks: boolean[][] = [];
   private keys: Record<string, boolean> = {};
 
@@ -47,6 +51,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
     this.resetBall();
+    this.lastTime = performance.now();
     this.loop();
   }
 
@@ -59,26 +64,30 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
   private resetBall() {
     this.ball.x = this.W / 2;
     this.ball.y = this.H - 60;
-    this.ball.vx = 3 * (Math.random() < 0.5 ? 1 : -1);
-    this.ball.vy = -4;
+    this.ball.vx = 202 * (Math.random() < 0.5 ? 1 : -1);
+    this.ball.vy = -269;
   }
 
   private loop = () => {
-    this.update();
+    const now = performance.now();
+    // Clamp dt para evitar teletransportes/tunneling si la pestaña estuvo en pausa
+    const dt = Math.min((now - this.lastTime) / 1000, 1 / 30);
+    this.lastTime = now;
+    this.update(dt);
     this.draw();
     this.animationId = requestAnimationFrame(this.loop);
   };
 
-  private update() {
+  private update(dt: number) {
     // Paddle
     if ((this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) && this.paddleX > 0)
-      this.paddleX -= this.SPEED;
+      this.paddleX -= this.SPEED * dt;
     if ((this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) && this.paddleX + this.PW < this.W)
-      this.paddleX += this.SPEED;
+      this.paddleX += this.SPEED * dt;
 
     // Bola
-    this.ball.x += this.ball.vx;
-    this.ball.y += this.ball.vy;
+    this.ball.x += this.ball.vx * dt;
+    this.ball.y += this.ball.vy * dt;
 
     // Rebote paredes
     if (this.ball.x - this.BALL_R <= 0) { this.ball.x = this.BALL_R; this.ball.vx *= -1; }
@@ -94,8 +103,8 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
         this.ball.x <= this.paddleX + this.PW) {
       this.ball.y = paddleY - this.BALL_R;
       this.ball.vy = -Math.abs(this.ball.vy);
-      this.ball.vx += (this.ball.x - (this.paddleX + this.PW / 2)) * 0.15;
-      this.ball.vx = Math.max(-6, Math.min(6, this.ball.vx));
+      this.ball.vx += (this.ball.x - (this.paddleX + this.PW / 2)) * 10.08;
+      this.ball.vx = Math.max(-this.MAX_BALL_VX, Math.min(this.MAX_BALL_VX, this.ball.vx));
     }
 
     // Colisión con ladrillos
@@ -117,6 +126,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
     if (this.bricks.every(row => row.every(b => !b))) {
       cancelAnimationFrame(this.animationId);
       this.close.emit('win');
+      this.appRef.tick();
       return;
     }
 
@@ -126,6 +136,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
       if (this.lives <= 0) {
         cancelAnimationFrame(this.animationId);
         this.close.emit('loss');
+        this.appRef.tick();
         return;
       }
       this.resetBall();
