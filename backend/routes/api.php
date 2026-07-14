@@ -30,6 +30,7 @@ Route::get('/users/{id}/stats/totals', [UserController::class, 'getTotalWinsLoss
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //https//localhost/api/users/25
 Route::get('/users/by-email/{email}', [UserController::class, 'getIdByEmail']);
 Route::get('/users/recentActivity/{id}', [UserController::class, 'getRecentActivity']);
+Route::post('/users/{id}/add-points', [UserController::class, 'addPoints'])->middleware('auth:sanctum');
 
 
 //Games

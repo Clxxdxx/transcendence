@@ -1,5 +1,6 @@
-<div class="flex flex-col items-center p-15 rounded-3xl border border-blue-500/30 shadow-[0_0_50px_rgba(56,189,248,0.2)] hover:shadow-[0_0_60px_rgba(56,189,248,0.4)] hover:-translate-y-2 transition-all duration-300 w-full">
-  
+<div class="flex flex-col items-center p-15 rounded-3xl border border-blue-500/30 shadow-[0_0_50px_rgba(56,189,248,0.2)] hover:shadow-[0_0_60px_rgba(56,189,248,0.4)] hover:-translate-y-2 transition-all duration-300 w-full"
+     [class.opacity-60]="isLockedInRanked">
+
   <div class="w-32 h-32 mb-8 rounded-3xl border-2 border-cyan-400 flex items-center justify-center bg-cyan-400/5 shadow-[0_0_25px_rgba(34,211,238,0.3)]">
     <img [src]="svgPath" [alt]="title" class="w-20 h-20 object-contain" />
   </div>
@@ -9,11 +10,14 @@
   </h3>
 
   <div class="w-full flex flex-col gap-4">
-    <button (click)="playVsAi()" class="w-full py-4 rounded-xl bg-gradient-to-r from-blue-800 to-indigo-800 border border-blue-500 text-cyan-200 text-base font-semibold hover:brightness-125 transition-all shadow-lg cursor-pointer">
-      Play vs AI
-    </button>
-    <button (click)="playRanked()" class="w-full py-4 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-cyan-200 text-base font-semibold opacity-90 hover:opacity-100 hover:brightness-110 transition-all shadow-lg cursor-pointer">
-      Play Online Ranked
-    </button>
+    @if (isLockedInRanked) {
+      <div class="w-full py-4 rounded-xl bg-gradient-to-r from-slate-700 to-slate-600 border border-slate-500 text-slate-300 text-base font-semibold text-center cursor-not-allowed select-none">
+        ✓ Completed
+      </div>
+    } @else {
+      <button (click)="playVsAi()" class="w-full py-4 rounded-xl bg-gradient-to-r from-blue-800 to-indigo-800 border border-blue-500 text-cyan-200 text-base font-semibold hover:brightness-125 transition-all shadow-lg cursor-pointer">
+        Play vs AI
+      </button>
+    }
   </div>
 </div>

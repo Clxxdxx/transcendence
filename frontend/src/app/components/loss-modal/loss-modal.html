@@ -1,13 +1,32 @@
 <div class="fixed inset-0 bg-[#06091f]/80 flex items-center justify-center z-50 p-4 backdrop-blur-md">
   <div class="bg-[#11163B] border border-red-500/30 w-full max-w-sm p-8 rounded-3xl shadow-[0_0_40px_rgba(239,68,68,0.15)] flex flex-col items-center">
-    
+
     <div class="w-20 h-20 mb-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
       <span class="text-4xl">❌</span>
     </div>
 
-    <h2 class="text-4xl font-black text-red-400 mb-2 tracking-widest uppercase italic">Defeat</h2>
+    <h2 class="text-4xl font-black text-red-400 mb-4 tracking-widest uppercase italic">Failure</h2>
 
-    <button (click)="onBackToGames()" 
+    @if (isRanked) {
+      <div class="flex items-center gap-2 mb-3">
+        <div class="px-5 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 font-bold text-lg tracking-wide">
+          +{{ points }} pts
+        </div>
+        @if (multiplier > 1 && points > 0) {
+          <div class="px-3 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 font-bold text-sm tracking-wide">
+            ×{{ multiplier }}
+          </div>
+        }
+      </div>
+      @if (sessionComplete) {
+        <div class="mb-4 px-4 py-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm font-semibold text-center">
+          🏁 Ranked session complete!<br>
+          <span class="text-yellow-200 font-bold text-base">+{{ totalPoints }} pts total saved</span>
+        </div>
+      }
+    }
+
+    <button (click)="onBackToGames()"
             class="w-full py-3 rounded-xl bg-gradient-to-r from-red-900 via-red-700 to-red-500 text-white font-bold uppercase tracking-wider hover:brightness-110 shadow-lg shadow-red-900/20 transition-all active:scale-[0.98]">
       Back to games
     </button>

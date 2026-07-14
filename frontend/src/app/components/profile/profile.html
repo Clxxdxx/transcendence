@@ -130,7 +130,7 @@
               @for (activity of recentActivity; track $index) {
                 <tr class="hover:bg-white/5 transition-colors">
                   <td class="py-3 text-white font-medium">{{ activity.game_name }}</td>
-                  <td class="py-3 font-bold" [ngClass]="activity.result === 'Victory' ? 'text-emerald-400' : 'text-red-400'">
+                  <td class="py-3 font-bold" [ngClass]="activity.result === 'Success' ? 'text-emerald-400' : 'text-red-400'">
                     {{ activity.result }}
                   </td>
                   <td class="py-3 font-mono">{{ activity.points }} pts</td>
