@@ -15,12 +15,9 @@ export class Wordle {
   word = WORDS[Math.floor(Math.random() * WORDS.length)];
   guesses: string[] = [];
   current = '';
-  gameOver = false;
-  message = '';
   readonly maxGuesses = 6;
 
   onKey(key: string) {
-    if (this.gameOver) return;
     if (key === 'ENTER') return this.submit();
     if (key === 'BACK') return (this.current = this.current.slice(0, -1));
     if (/^[A-ZÑ]$/.test(key) && this.current.length < 5) this.current += key;
@@ -29,14 +26,13 @@ export class Wordle {
   submit() {
     if (this.current.length !== 5) return;
     this.guesses.push(this.current);
-    if (this.current === this.word) {
-      this.gameOver = true;
-      this.message = '¡Has ganado!';
-    } else if (this.guesses.length >= this.maxGuesses) {
-      this.gameOver = true;
-      this.message = `Has perdido. La palabra era ${this.word}`;
-    }
+    const guess = this.current;
     this.current = '';
+    if (guess === this.word) {
+      this.close.emit('win');
+    } else if (this.guesses.length >= this.maxGuesses) {
+      this.close.emit('loss');
+    }
   }
 
   letterState(guess: string, i: number): 'correct' | 'present' | 'absent' {
@@ -46,16 +42,7 @@ export class Wordle {
     return 'absent';
   }
 
-  restart() {
-    this.word = WORDS[Math.floor(Math.random() * WORDS.length)];
-    this.guesses = [];
-    this.current = '';
-    this.gameOver = false;
-    this.message = '';
-  }
-
   exit() {
-    if (!this.gameOver) return this.close.emit(null);
-    this.close.emit(this.message.startsWith('¡Has ganado') ? 'win' : 'loss');
+    this.close.emit(null);
   }
 }

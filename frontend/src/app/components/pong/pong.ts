@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, AfterViewInit, OnDestroy, ApplicationRef } from '@angular/core';
 
 @Component({
   selector: 'app-pong',
@@ -9,23 +9,28 @@ export class Pong implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @Output() close = new EventEmitter<'win' | 'loss' | null>();
 
+  constructor(private appRef: ApplicationRef) {}
+
   private ctx!: CanvasRenderingContext2D;
   private animationId = 0;
+  private lastTime = 0;
 
   private readonly W = 800;
   private readonly H = 500;
   private readonly PW = 10;
   private readonly PH = 80;
-  private readonly SPEED = 4;
+  private readonly SPEED = 240; // px/s
   private readonly BW = 10;
   private readonly BH = 10;
   private readonly WIN_SCORE = 5;
+  private readonly MAX_BALL_VX = 806; // px/s
+  private readonly MAX_BALL_VY = 672; // px/s
 
   private playerScore = 0;
   private aiScore = 0;
   private player = { x: 20, y: 0 };
   private ai = { x: 0, y: 0 };
-  private ball = { x: 0, y: 0, vx: 4, vy: 3 };
+  private ball = { x: 0, y: 0, vx: 269, vy: 202 };
   private keys: Record<string, boolean> = {};
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -42,6 +47,7 @@ export class Pong implements AfterViewInit, OnDestroy {
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
     this.resetBall();
+    this.lastTime = performance.now();
     this.loop();
   }
 
@@ -54,33 +60,37 @@ export class Pong implements AfterViewInit, OnDestroy {
   private resetBall() {
     this.ball.x = this.W / 2;
     this.ball.y = this.H / 2;
-    this.ball.vx = 4 * (Math.random() < 0.5 ? 1 : -1);
-    this.ball.vy = (Math.random() * 2 + 2) * (Math.random() < 0.5 ? 1 : -1);
+    this.ball.vx = 269 * (Math.random() < 0.5 ? 1 : -1);
+    this.ball.vy = (Math.random() * 134 + 134) * (Math.random() < 0.5 ? 1 : -1);
   }
 
   private loop = () => {
-    this.update();
+    const now = performance.now();
+    // Clamp dt para evitar teletransportes/tunneling si la pestaña estuvo en pausa
+    const dt = Math.min((now - this.lastTime) / 1000, 1 / 30);
+    this.lastTime = now;
+    this.update(dt);
     this.draw();
     this.animationId = requestAnimationFrame(this.loop);
   };
 
-  private update() {
+  private update(dt: number) {
     // Paddle jugador
     if ((this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']) && this.player.y > 0)
-      this.player.y -= this.SPEED;
+      this.player.y -= this.SPEED * dt;
     if ((this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']) && this.player.y + this.PH < this.H)
-      this.player.y += this.SPEED;
+      this.player.y += this.SPEED * dt;
 
     // Paddle IA — mismo speed que el jugador, sigue el centro de la bola
     const aiMid = this.ai.y + this.PH / 2;
     if (aiMid < this.ball.y - 4 && this.ai.y + this.PH < this.H)
-      this.ai.y += this.SPEED;
+      this.ai.y += this.SPEED * dt;
     else if (aiMid > this.ball.y + 4 && this.ai.y > 0)
-      this.ai.y -= this.SPEED;
+      this.ai.y -= this.SPEED * dt;
 
     // Mover bola
-    this.ball.x += this.ball.vx;
-    this.ball.y += this.ball.vy;
+    this.ball.x += this.ball.vx * dt;
+    this.ball.y += this.ball.vy * dt;
 
     // Rebote paredes top/bottom
     if (this.ball.y <= 0) { this.ball.y = 0; this.ball.vy *= -1; }
@@ -93,9 +103,9 @@ export class Pong implements AfterViewInit, OnDestroy {
         this.ball.y + this.BH >= this.player.y &&
         this.ball.y <= this.player.y + this.PH) {
       this.ball.x = this.player.x + this.PW;
-      this.ball.vx = Math.min(Math.abs(this.ball.vx) * 1.05, 12);
-      this.ball.vy += (this.ball.y + this.BH / 2 - (this.player.y + this.PH / 2)) * 0.1;
-      this.ball.vy = Math.max(-10, Math.min(10, this.ball.vy));
+      this.ball.vx = Math.min(Math.abs(this.ball.vx) * 1.05, this.MAX_BALL_VX);
+      this.ball.vy += (this.ball.y + this.BH / 2 - (this.player.y + this.PH / 2)) * 6.72;
+      this.ball.vy = Math.max(-this.MAX_BALL_VY, Math.min(this.MAX_BALL_VY, this.ball.vy));
     }
 
     // Rebote paddle IA (solo cuando la bola va hacia la derecha)
@@ -105,9 +115,9 @@ export class Pong implements AfterViewInit, OnDestroy {
         this.ball.y + this.BH >= this.ai.y &&
         this.ball.y <= this.ai.y + this.PH) {
       this.ball.x = this.ai.x - this.BW;
-      this.ball.vx = -Math.min(Math.abs(this.ball.vx) * 1.05, 12);
-      this.ball.vy += (this.ball.y + this.BH / 2 - (this.ai.y + this.PH / 2)) * 0.1;
-      this.ball.vy = Math.max(-10, Math.min(10, this.ball.vy));
+      this.ball.vx = -Math.min(Math.abs(this.ball.vx) * 1.05, this.MAX_BALL_VX);
+      this.ball.vy += (this.ball.y + this.BH / 2 - (this.ai.y + this.PH / 2)) * 6.72;
+      this.ball.vy = Math.max(-this.MAX_BALL_VY, Math.min(this.MAX_BALL_VY, this.ball.vy));
     }
 
     // Gol izquierda → punto para la IA
@@ -117,6 +127,7 @@ export class Pong implements AfterViewInit, OnDestroy {
         cancelAnimationFrame(this.animationId);
         this.draw();
         this.close.emit('loss');
+        this.appRef.tick();
         return;
       }
       this.resetBall();
@@ -129,6 +140,7 @@ export class Pong implements AfterViewInit, OnDestroy {
         cancelAnimationFrame(this.animationId);
         this.draw();
         this.close.emit('win');
+        this.appRef.tick();
         return;
       }
       this.resetBall();

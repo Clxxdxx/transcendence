@@ -13,3 +13,4 @@ nginx/ssl/
 
 .DS_Store
 secrets/
+.env

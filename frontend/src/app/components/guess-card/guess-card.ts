@@ -12,20 +12,18 @@ const NAMES: Record<number, string> = { 1: 'As', 11: 'J', 12: 'Q', 13: 'K' };
 export class GuessCard {
   @Output() close = new EventEmitter<'win' | 'loss' | null>();
 
-  readonly rounds = 5;
+  readonly rounds = 10;
+  private readonly winThreshold = Math.floor(this.rounds / 2) + 1;
   round = 0;
   score = 0;
   current = 1 + Math.floor(Math.random() * 13);
   last: number | null = null;
-  gameOver = false;
-  message = '';
 
   cardName(n: number) {
     return NAMES[n] ?? String(n);
   }
 
   guess(higher: boolean) {
-    if (this.gameOver) return;
     const next = 1 + Math.floor(Math.random() * 13);
     const correct = higher ? next >= this.current : next <= this.current;
     if (correct) this.score++;
@@ -34,22 +32,11 @@ export class GuessCard {
     this.current = next;
 
     if (this.round >= this.rounds) {
-      this.gameOver = true;
-      this.message = this.score >= 3 ? '¡Has ganado!' : 'Has perdido';
+      this.close.emit(this.score >= this.winThreshold ? 'win' : 'loss');
     }
   }
 
-  restart() {
-    this.round = 0;
-    this.score = 0;
-    this.current = 1 + Math.floor(Math.random() * 13);
-    this.last = null;
-    this.gameOver = false;
-    this.message = '';
-  }
-
   exit() {
-    if (!this.gameOver) return this.close.emit(null);
-    this.close.emit(this.message === '¡Has ganado!' ? 'win' : 'loss');
+    this.close.emit(null);
   }
 }

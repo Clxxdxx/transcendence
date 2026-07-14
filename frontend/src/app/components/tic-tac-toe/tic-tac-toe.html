@@ -5,14 +5,16 @@
       class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
       ← Volver
     </button>
-    <span class="text-gray-400 text-sm">Tú eres X</span>
+    <span class="text-gray-400 text-sm">Tú eres X — Mejor de 5</span>
   </div>
+
+  <span class="text-cyan-200 text-lg font-semibold">Tú {{ playerWins }} - {{ aiWins }} IA</span>
 
   <div class="grid grid-cols-3 gap-2">
     @for (cell of board; track $index) {
       <button
         (click)="play($index)"
-        [disabled]="gameOver || !!cell"
+        [disabled]="!!cell"
         class="w-24 h-24 flex items-center justify-center text-4xl font-bold
                border border-gray-700 bg-black text-white
                hover:bg-gray-900 disabled:cursor-default transition-colors">
@@ -20,15 +22,4 @@
       </button>
     }
   </div>
-
-  @if (gameOver) {
-    <div class="flex flex-col items-center gap-3">
-      <span class="text-xl text-cyan-200">{{ message }}</span>
-      <button
-        (click)="restart()"
-        class="px-4 py-2 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-colors cursor-pointer">
-        Jugar de nuevo
-      </button>
-    </div>
-  }
 </div>

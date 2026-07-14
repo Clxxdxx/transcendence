@@ -16,15 +16,17 @@ const WIN_LINES = [
   templateUrl: './tic-tac-toe.html',
 })
 export class TicTacToe {
-  @Output() close = new EventEmitter<'win' | 'loss' | 'draw' | null>();
+  @Output() close = new EventEmitter<'win' | 'loss' | null>();
+
+  private readonly SERIES_WINS = 3; // mejor de 5
 
   board: Cell[] = Array(9).fill(null);
-  gameOver = false;
-  message = '';
+  playerWins = 0;
+  aiWins = 0;
   private aiMoveCount = 0;
 
   play(index: number) {
-    if (this.gameOver || this.board[index]) return;
+    if (this.board[index]) return;
 
     this.board[index] = 'X';
     if (this.checkEnd('X')) return;
@@ -81,32 +83,32 @@ export class TicTacToe {
 
   private checkEnd(lastPlayer: 'X' | 'O'): boolean {
     if (WIN_LINES.some(line => line.every(i => this.board[i] === lastPlayer))) {
-      this.gameOver = true;
-      this.message = lastPlayer === 'X' ? '¡Has ganado!' : 'La IA ha ganado';
+      if (lastPlayer === 'X') this.playerWins++;
+      else this.aiWins++;
+      this.finishRound();
       return true;
     }
     if (this.board.every(cell => cell !== null)) {
-      this.gameOver = true;
-      this.message = 'Empate';
+      this.finishRound();
       return true;
     }
     return false;
   }
 
-  restart() {
+  private finishRound() {
+    if (this.playerWins >= this.SERIES_WINS) {
+      this.close.emit('win');
+      return;
+    }
+    if (this.aiWins >= this.SERIES_WINS) {
+      this.close.emit('loss');
+      return;
+    }
     this.board = Array(9).fill(null);
-    this.gameOver = false;
-    this.message = '';
     this.aiMoveCount = 0;
   }
 
   exit() {
-    if (!this.gameOver) {
-      this.close.emit(null);
-      return;
-    }
-    if (this.message === '¡Has ganado!') this.close.emit('win');
-    else if (this.message === 'La IA ha ganado') this.close.emit('loss');
-    else this.close.emit('draw');
+    this.close.emit(null);
   }
 }
