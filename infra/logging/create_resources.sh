@@ -54,7 +54,7 @@ done
 
 # create index pattern in Kibana (with error handling)
 echo "Creating Kibana index pattern..."
-curl -s -X POST "$KIBANA_HOST/kibana/api/saved_objects/index-pattern/laravel-logs-pattern" \
+curl -s -X POST "$KIBANA_HOST/kibana/api/saved_objects/index-pattern/laravel-logs-pattern?overwrite=true" \
   -H 'kbn-xsrf: true' \
   -H 'Content-Type: application/json' \
   -d '{"attributes":{"title":"laravel-logs-*","timeFieldName":"@timestamp"}}' || echo "Warning: Could not create index pattern in Kibana"
