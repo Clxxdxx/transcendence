@@ -32,6 +32,7 @@ export class Pong implements AfterViewInit, OnDestroy {
   private ai = { x: 0, y: 0 };
   private ball = { x: 0, y: 0, vx: 269, vy: 202 };
   private keys: Record<string, boolean> = {};
+  private resetDelay = 1;
 
   private onKeyDown = (e: KeyboardEvent) => {
     this.keys[e.key] = true;
@@ -80,6 +81,13 @@ export class Pong implements AfterViewInit, OnDestroy {
       this.player.y -= this.SPEED * dt;
     if ((this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']) && this.player.y + this.PH < this.H)
       this.player.y += this.SPEED * dt;
+
+    if (this.resetDelay > 0) {
+      this.resetDelay -= dt;
+      if (this.resetDelay <= 0)
+        this.resetBall();
+      return;
+    }
 
     // Paddle IA — mismo speed que el jugador, sigue el centro de la bola
     const aiMid = this.ai.y + this.PH / 2;
@@ -130,7 +138,7 @@ export class Pong implements AfterViewInit, OnDestroy {
         this.appRef.tick();
         return;
       }
-      this.resetBall();
+      this.resetDelay = 1;
     }
 
     // Gol derecha → punto para el jugador
@@ -143,7 +151,7 @@ export class Pong implements AfterViewInit, OnDestroy {
         this.appRef.tick();
         return;
       }
-      this.resetBall();
+      this.resetDelay = 1;
     }
   }
 
