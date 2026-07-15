@@ -1,5 +1,5 @@
-<app-navbar 
-  [isLoggedIn]="isLoggedIn" 
+<app-navbar
+  [isLoggedIn]="isLoggedIn"
   [userInitial]="userInitial"
   (loginRequired)="isLoginModalOpen = true"
   (loginClicked)="isLoginModalOpen = true"
@@ -8,23 +8,44 @@
   (logout)="onLogout()">
 </app-navbar>
 
-<main> 
+<main>
   @if (currentView === 'games') {
     <div class="px-[8vw] py-10">
-      
-      <h2 class="text-2xl font-semibold mb-8 text-cyan-200 tracking-wide">
-        Featured Games
-      </h2>
-      
+
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-semibold text-cyan-200 tracking-wide">
+          Featured Games
+        </h2>
+
+        @if (isLoggedIn) {
+          <button (click)="toggleRankedMode()"
+            class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider transition-all"
+            [ngClass]="isRankedMode
+              ? 'bg-gradient-to-r from-yellow-600 to-orange-500 text-white border border-yellow-400 shadow-[0_0_12px_rgba(234,179,8,0.4)]'
+              : 'bg-transparent border border-slate-600 text-slate-400 hover:border-yellow-500 hover:text-yellow-400'">
+            <span>{{ isRankedMode ? '⚔️' : '🏅' }}</span>
+            <span>{{ isRankedMode ? 'Ranked ON' : 'Ranked Mode' }}</span>
+            @if (isRankedMode) {
+              <span class="px-1.5 py-0.5 rounded-md bg-white/20 text-xs font-mono">
+                {{ rankedCompletedGames.length }}/5
+              </span>
+              <span class="px-1.5 py-0.5 rounded-md bg-black/25 text-xs font-mono text-yellow-200">
+                {{ rankedSessionPoints }} pts
+              </span>
+            }
+          </button>
+        }
+      </div>
+
       <div class="flex flex-col xl:flex-row gap-8 lg:gap-12 items-stretch">
-        
+
         <div class="flex-1 w-full">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (game of games; track game.title) {
-              <app-game-card 
-                [title]="game.title" 
+              <app-game-card
+                [title]="game.title"
                 [svgPath]="game.svg"
-                (loginRequired)="isLoginModalOpen = true"
+                [isLockedInRanked]="isGameLockedInRanked(game.title)"
                 (vsAiClicked)="onPlayVsAi($event)">
               </app-game-card>
             }
@@ -33,10 +54,10 @@
 
         @if (isLoggedIn) {
           <div class="w-full xl:w-[320px] 2xl:w-[350px] shrink-0 relative h-[700px] xl:h-auto">
-            
+
             <div class="flex flex-col gap-6 h-full xl:absolute xl:inset-0">
               <app-chat-global class="flex-1 flex flex-col overflow-hidden min-h-0"></app-chat-global>
-              <app-top-players class="flex-1 flex flex-col overflow-hidden min-h-0" 
+              <app-top-players class="flex-1 flex flex-col overflow-hidden min-h-0"
                                (viewLeaderboard)="currentView = 'leaderboard'">
               </app-top-players>
             </div>
@@ -90,8 +111,8 @@
 <app-footer (termsClicked)="isTermsModalOpen = true"></app-footer>
 
 @if (isLoginModalOpen) {
-  <app-auth-modal 
-    (close)="isLoginModalOpen = false" 
+  <app-auth-modal
+    (close)="isLoginModalOpen = false"
     (loginSuccess)="onLoginSuccess($event)"
     (toSignUp)="toSignUp()"
     (forgotPassClicked)="toSendCodeModal()">
@@ -99,8 +120,8 @@
 }
 
 @if (isSignUpModalOpen) {
-  <app-sign-up-modal 
-    (close)="isSignUpModalOpen = false" 
+  <app-sign-up-modal
+    (close)="isSignUpModalOpen = false"
     (signUpSuccess)="onSignUpSuccess()"
     (toSignUp)="toSignUp()">
   </app-sign-up-modal>
@@ -109,9 +130,9 @@
 @if (isSendCodeModalOpen) {
   <app-send-code-modal
     (close)="isSendCodeModalOpen = false"
-    (toBack) = "onBack()"
-    (toSendCode) = "toChangePass($event)">
-  </app-send-code-modal> 
+    (toBack)="onBack()"
+    (toSendCode)="toChangePass($event)">
+  </app-send-code-modal>
 }
 
 @if (isChangePassModalOpen) {
@@ -127,11 +148,32 @@
 }
 
 @if (isWinModalOpen) {
-  <app-win-modal (close)="isWinModalOpen = false"></app-win-modal>
+  <app-win-modal
+    [isRanked]="isRankedMode || rankedSessionComplete"
+    [points]="rankedLastPoints"
+    [multiplier]="rankedLastMultiplier"
+    [sessionComplete]="rankedSessionComplete"
+    [totalPoints]="rankedTotalPoints"
+    (close)="isWinModalOpen = false; rankedSessionComplete = false">
+  </app-win-modal>
 }
 @if (isLossModalOpen) {
-  <app-loss-modal (close)="isLossModalOpen = false"></app-loss-modal>
+  <app-loss-modal
+    [isRanked]="isRankedMode || rankedSessionComplete"
+    [points]="rankedLastPoints"
+    [multiplier]="rankedLastMultiplier"
+    [sessionComplete]="rankedSessionComplete"
+    [totalPoints]="rankedTotalPoints"
+    (close)="isLossModalOpen = false; rankedSessionComplete = false">
+  </app-loss-modal>
 }
 @if (isDrawModalOpen) {
-  <app-draw-modal (close)="isDrawModalOpen = false"></app-draw-modal>
+  <app-draw-modal
+    [isRanked]="isRankedMode || rankedSessionComplete"
+    [points]="rankedLastPoints"
+    [multiplier]="rankedLastMultiplier"
+    [sessionComplete]="rankedSessionComplete"
+    [totalPoints]="rankedTotalPoints"
+    (close)="isDrawModalOpen = false; rankedSessionComplete = false">
+  </app-draw-modal>
 }

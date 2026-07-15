@@ -206,6 +206,21 @@ class UserController extends Controller
         return response()->json($leaderboard, 200);
     }
 
+    public function addPoints(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'points' => 'required|integer|min:0',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->increment('points', $validated['points']);
+
+        return response()->json([
+            'message' => 'Points updated successfully',
+            'total_points' => $user->fresh()->points
+        ], 200);
+    }
+
     public function getRecentActivity(string $id)
     {
         $activities = DB::table('match_user')
@@ -218,7 +233,7 @@ class UserController extends Controller
             ->map(function ($item) use ($id) {
                 return [
                     'game_name' => $item->name ?? 'Unknown',
-                    'result'    => ($item->id_winner == $id) ? 'Victory' : 'Defeat',
+                    'result'    => ($item->id_winner == $id) ? 'Success' : 'Failure',
                     'points'    => $item->points,
                     'date'      => \Carbon\Carbon::parse($item->date)->diffForHumans(),
                 ];
