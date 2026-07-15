@@ -15,14 +15,13 @@ DOCKER_COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker
 
 all: secrets/kibana_htpasswd up migrate logs-init
 
-# Genera el archivo de credenciales para Kibana si no existe
+# Genera el archivo de credenciales para Kibana leyendo KIBANA_USER y KIBANA_PASS del .env
 secrets/kibana_htpasswd:
 	@mkdir -p secrets
-	@echo "$(YELLOW)Configuración de acceso a Kibana$(RESET)"
-	@printf "Usuario para Kibana: "; read USER; \
-	printf "Contraseña para Kibana: "; stty -echo; read PASS; stty echo; echo; \
-	docker run --rm httpd:alpine htpasswd -nb "$$USER" "$$PASS" > secrets/kibana_htpasswd
-	@echo "$(GREEN)Credenciales guardadas. Acceso: https://localhost/kibana/$(RESET)"
+	@KIBANA_USER=$$(grep '^KIBANA_USER=' backend/.env | cut -d= -f2); \
+	KIBANA_PASS=$$(grep '^KIBANA_PASS=' backend/.env | cut -d= -f2); \
+	docker run --rm httpd:alpine htpasswd -nb "$$KIBANA_USER" "$$KIBANA_PASS" > secrets/kibana_htpasswd
+	@echo "$(GREEN)Credenciales de Kibana generadas desde .env. Acceso: https://localhost/kibana/$(RESET)"
 
 # Levanta los contenedores en segundo plano y construye si es necesario
 up:
@@ -43,7 +42,7 @@ down:
 	@echo "$(RED)Deteniendo servicios...$(RESET)"
 	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml down
 	@rm -f secrets/kibana_htpasswd
-	@echo "$(YELLOW)Credenciales de Kibana eliminadas. Se pedirán en el próximo make.$(RESET)"
+
 
 # Detiene y borra contenedores, volúmenes y redes huérfanas
 clean:
@@ -51,7 +50,7 @@ clean:
 	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml down -v --remove-orphans || true
 	docker network prune -f || true
 	@rm -f secrets/kibana_htpasswd
-	@echo "$(YELLOW)Credenciales de Kibana eliminadas. Se pedirán en el próximo make.$(RESET)"
+
 
 # Ejecuta las migraciones
 migrate:
