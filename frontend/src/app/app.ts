@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Navbar } from './components/navbar/navbar';
 import { GameCard } from './components/game-card/game-card';
@@ -35,6 +35,8 @@ import { GuessCard } from './components/guess-card/guess-card';
   styleUrl: './app.css'
 })
 export class App implements OnInit {
+  @ViewChild(TopPlayers) topPlayersRef?: TopPlayers;
+
   games = [
     { title: 'Tic-Tac-Toe', svg: '/icons/tic-tac-toe.svg' },
     { title: 'Wordle', svg: '/icons/wordle.svg' },
@@ -237,6 +239,7 @@ export class App implements OnInit {
   private saveRankedPoints(points: number) {
     if (this.currentUserId && points > 0) {
       this.userService.addPoints(this.currentUserId, points).subscribe({
+        next: () => this.topPlayersRef?.loadTopPlayers(),
         error: err => console.error('Error saving ranked points', err)
       });
     }

@@ -5,7 +5,8 @@ Contraseña -> root_password_42
 Base de datos -> transcendence
 
 Entrar al proyecto:
-http://localhost:4200/
+https://localhost:8443/
+(NO uses http://localhost:4200/ para probar login/signup: es el dev server de Angular sin proxy a /api, y /api/* devuelve 404 ahí. Solo sirve para ver cambios de UI en caliente.)
 
 
 Levantar todo:

@@ -24,8 +24,8 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
   private readonly MAX_BALL_VX = 403; // px/s
 
   private readonly ROWS = 5;
-  private readonly COLS = 8;
-  private readonly BRICK_W = 52;
+  private readonly COLS = 4;
+  private readonly BRICK_W = 108;
   private readonly BRICK_H = 16;
   private readonly GAP = 4;
   private readonly OFFSET_TOP = 40;

@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 export class ChatService {
   messages: { nick: string; text: string }[] = [];
   private socket!: WebSocket | null;
-  private socketUrl = 'wss://localhost/api/chat-socket';
+  private socketUrl = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/api/chat-socket`;
   
   messageReceived$ = new Subject<void>();
 

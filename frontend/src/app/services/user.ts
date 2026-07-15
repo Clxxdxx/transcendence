@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
   providedIn: 'root',
 })
 export class User {
-  private apiUrl = 'https://localhost/api';
+  private apiUrl = '/api';
   constructor(private http: HttpClient){}
 
   getAuthUser(): Observable<any> {
