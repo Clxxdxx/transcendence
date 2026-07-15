@@ -24,8 +24,11 @@ export class GuessCard {
   }
 
   guess(higher: boolean) {
-    const next = 1 + Math.floor(Math.random() * 13);
-    const correct = higher ? next >= this.current : next <= this.current;
+    let next;
+    do {
+      next = 1 + Math.floor(Math.random() * 13);
+    } while (next === this.current);
+    let correct = higher ? next >= this.current : next <= this.current;
     if (correct) this.score++;
     this.last = next;
     this.round++;
