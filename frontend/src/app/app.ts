@@ -143,16 +143,6 @@ export class App implements OnInit {
     this.isRankedMode = !this.isRankedMode;
   }
 
-
-    onLogout(){
-      this.auth.logout().subscribe({
-        error: () => {}
-      });
-      this.isLoggedIn = false;
-      this.currentView = 'games';
-      this.chatService.disconnect();
-    }
-
   private resetRankedSession() {
     this.rankedCompletedGames = [];
     this.rankedSessionPoints = 0;
