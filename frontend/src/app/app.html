@@ -27,7 +27,7 @@
             <span>{{ isRankedMode ? 'Ranked ON' : 'Ranked Mode' }}</span>
             @if (isRankedMode) {
               <span class="px-1.5 py-0.5 rounded-md bg-white/20 text-xs font-mono">
-                {{ rankedCompletedGames.length }}/5
+                {{ rankedCompletedGames.length }}/{{ rankedGamesTotal }}
               </span>
               <span class="px-1.5 py-0.5 rounded-md bg-black/25 text-xs font-mono text-yellow-200">
                 {{ rankedSessionPoints }} pts
@@ -87,6 +87,10 @@
 
   @if (currentView === 'guess-card') {
     <app-guess-card (close)="onGuessCardClose($event)"></app-guess-card>
+  }
+
+  @if (currentView === 'connect-four') {
+    <app-connect-four (close)="onConnectFourClose($event)"></app-connect-four>
   }
 
   @if (currentView === 'leaderboard') {
