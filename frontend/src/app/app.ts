@@ -242,6 +242,14 @@ export class App implements OnInit {
     }
   }
 
+  private saveMatchStat(gameTitle: string, result: 'win' | 'loss' | 'draw', pointsScored: number) {
+      if (!this.currentUserId) return; 
+
+      this.userService.recordMatchResult(this.currentUserId, gameTitle, result, pointsScored).subscribe({
+        error: err => console.error(`Error al guardar la estadística de ${gameTitle}`, err)
+      });
+    }
+
   onPlayVsAi(title: string) {
     this.gameStartTime = Date.now();
     if (title === 'Pong')        this.currentView = 'pong';
@@ -254,6 +262,16 @@ export class App implements OnInit {
   onPongClose(result: 'win' | 'loss' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Pong', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    this.saveMatchStat('Pong', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Pong', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Pong', 'loss'); this.isLossModalOpen = true; }
     if (result === null)   { this.handleRankedQuit('Pong');           if (this.isRankedMode) this.isLossModalOpen = true; }
@@ -262,6 +280,17 @@ export class App implements OnInit {
   onTicTacToeClose(result: 'win' | 'loss' | 'draw' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Tic-Tac-Toe', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+
+    this.saveMatchStat('Tic-Tac-Toe', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Tic-Tac-Toe', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Tic-Tac-Toe', 'loss'); this.isLossModalOpen = true; }
     if (result === 'draw') { this.handleRankedResult('Tic-Tac-Toe', 'draw'); this.isDrawModalOpen = true; }
@@ -271,6 +300,17 @@ export class App implements OnInit {
   onArkanoidClose(result: 'win' | 'loss' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Arkanoid', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+
+    this.saveMatchStat('Arkanoid', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Arkanoid', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Arkanoid', 'loss'); this.isLossModalOpen = true; }
     if (result === null)   { this.handleRankedQuit('Arkanoid');           if (this.isRankedMode) this.isLossModalOpen = true; }
@@ -279,6 +319,17 @@ export class App implements OnInit {
   onWordleClose(result: 'win' | 'loss' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Wordle', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+
+    this.saveMatchStat('Wordle', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Wordle', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Wordle', 'loss'); this.isLossModalOpen = true; }
     if (result === null)   { this.handleRankedQuit('Wordle');           if (this.isRankedMode) this.isLossModalOpen = true; }
@@ -287,6 +338,18 @@ export class App implements OnInit {
   onGuessCardClose(result: 'win' | 'loss' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Guess card', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+
+
+    this.saveMatchStat('Guess card', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Guess card', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Guess card', 'loss'); this.isLossModalOpen = true; }
     if (result === null)   { this.handleRankedQuit('Guess card');           if (this.isRankedMode) this.isLossModalOpen = true; }

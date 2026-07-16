@@ -31,7 +31,7 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']); //https//local
 Route::get('/users/by-email/{email}', [UserController::class, 'getIdByEmail']);
 Route::get('/users/recentActivity/{id}', [UserController::class, 'getRecentActivity']);
 Route::post('/users/{id}/add-points', [UserController::class, 'addPoints'])->middleware('auth:sanctum');
-
+Route::post('/users/{id}/record-match', [UserController::class, 'recordMatch']);
 
 //Games
 Route::get('/games', [GameController::class, 'index']); //https//localhost/api/games/

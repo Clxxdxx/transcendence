@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Stat;
+use App\Models\Game;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -240,6 +241,56 @@ class UserController extends Controller
             });
 
         return response()->json($activities);
+    }
+
+    public function recordMatch(Request $request, string $id)
+        {
+            $validated = $request->validate([
+                'game' => 'required|string',
+                'result' => 'required|string|in:win,loss,draw',
+                'points' => 'required|integer'
+            ]);
+
+            $user = User::findOrFail($id);
+            $game = Game::where('name', $validated['game'])->first();
+
+            if (!$game) {
+                return response()->json([
+                    'message' => 'Game not found'
+                ], 404);
+            }
+
+            $stat = Stat::firstOrCreate(
+                ['id_user' => $user->id_user, 'id_game' => $game->id_game],
+                ['wins' => 0, 'losses' => 0]
+            );
+
+            if ($validated['result'] === 'win') {
+                $stat->increment('wins');
+            } elseif ($validated['result'] === 'loss') {
+                $stat->increment('losses');
+            }
+
+            $id_winner = ($validated['result'] === 'win') ? $user->id_user : null;
+
+            $id_match = DB::table('matches')->insertGetId([
+                'id_game' => $game->id_game,
+                'id_winner' => $id_winner,
+                'init_date' => now(),
+                'end_date'  => now(),
+            ]);
+
+            DB::table('match_user')->insert([
+                'id_match' => $id_match,
+                'id_user'  => $user->id_user,
+                'points'   => $validated['points'],
+                'date'     => now(),
+            ]);
+
+            return response()->json([
+                'message' => 'Match stat and activity recorded successfully',
+                'stat' => $stat->fresh()
+            ], 200);
     }
 
 }

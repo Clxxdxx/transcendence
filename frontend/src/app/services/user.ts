@@ -68,5 +68,17 @@ export class User {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.post(`${this.apiUrl}/users/${id}/add-points`, { points }, { headers });
   }
+  
+  recordMatchResult(id: number, gameTitle: string, result: string, points: number): Observable<any> {
+      const token = localStorage.getItem('auth_token');
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+      
+      return this.http.post(`${this.apiUrl}/users/${id}/record-match`, { 
+        game: gameTitle, 
+        result: result,
+        points: points
+      }, { headers });
+    }
+
 }
 
