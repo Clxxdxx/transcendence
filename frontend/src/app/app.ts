@@ -23,6 +23,7 @@ import { TicTacToe } from './components/tic-tac-toe/tic-tac-toe';
 import { Arkanoid } from './components/arkanoid/arkanoid';
 import { Wordle } from './components/wordle/wordle';
 import { GuessCard } from './components/guess-card/guess-card';
+import { ConnectFour } from './components/connect-four/connect-four';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,7 @@ import { GuessCard } from './components/guess-card/guess-card';
   imports: [CommonModule, Navbar, GameCard, AuthModal, Footer,
     SignUpModal, SendCodeModal, ChangePassModal, TermsModal,
     Leaderboard, Profile, LossModal, WinModal, DrawModal, Pong, TicTacToe, Arkanoid, Wordle, GuessCard,
-    ChatGlobal, TopPlayers],
+    ConnectFour, ChatGlobal, TopPlayers],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -44,7 +45,8 @@ export class App implements OnInit {
     { title: 'Connect 4', svg: '/icons/connect4.svg' }
   ];
 
-  private readonly RANKED_GAMES = ['Tic-Tac-Toe', 'Wordle', 'Pong', 'Guess card', 'Arkanoid'];
+  private readonly RANKED_GAMES = ['Tic-Tac-Toe', 'Wordle', 'Pong', 'Guess card', 'Arkanoid', 'Connect 4'];
+  readonly rankedGamesTotal = this.RANKED_GAMES.length;
   private readonly POINTS_WIN = 100;
   private readonly POINTS_DRAW = 30;
   private readonly POINTS_LOSS = 10;
@@ -180,6 +182,9 @@ export class App implements OnInit {
       case 'Arkanoid':
         // t=60s→×4.2, t=180s→×3, t=420s→×1.8, t=600s→×1.4
         maxMult = 5; k = 0.0039; break;
+      case 'Connect 4':
+        // t=5s→×4.7, t=30s→×3, t=60s→×2, t=120s→×1.3
+        maxMult = 5; k = 0.0231; break;
       default:
         return 1;
     }
@@ -257,6 +262,7 @@ export class App implements OnInit {
     if (title === 'Arkanoid')    this.currentView = 'arkanoid';
     if (title === 'Wordle')      this.currentView = 'wordle';
     if (title === 'Guess card')  this.currentView = 'guess-card';
+    if (title === 'Connect 4')   this.currentView = 'connect-four';
   }
 
   onPongClose(result: 'win' | 'loss' | null) {
@@ -353,5 +359,14 @@ export class App implements OnInit {
     if (result === 'win')  { this.handleRankedResult('Guess card', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Guess card', 'loss'); this.isLossModalOpen = true; }
     if (result === null)   { this.handleRankedQuit('Guess card');           if (this.isRankedMode) this.isLossModalOpen = true; }
+  }
+
+  onConnectFourClose(result: 'win' | 'loss' | 'draw' | null) {
+    this.currentView = 'games';
+    this.rankedSessionComplete = false;
+    if (result === 'win')  { this.handleRankedResult('Connect 4', 'win');  this.isWinModalOpen = true; }
+    if (result === 'loss') { this.handleRankedResult('Connect 4', 'loss'); this.isLossModalOpen = true; }
+    if (result === 'draw') { this.handleRankedResult('Connect 4', 'draw'); this.isDrawModalOpen = true; }
+    if (result === null)   { this.handleRankedQuit('Connect 4');           if (this.isRankedMode) this.isLossModalOpen = true; }
   }
 }
