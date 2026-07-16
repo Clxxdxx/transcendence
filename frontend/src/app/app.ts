@@ -364,6 +364,17 @@ export class App implements OnInit {
   onConnectFourClose(result: 'win' | 'loss' | 'draw' | null) {
     this.currentView = 'games';
     this.rankedSessionComplete = false;
+
+    const elapsed = Date.now() - this.gameStartTime;
+    const rawMultiplier = this.getTimeMultiplier('Connect 4', elapsed);
+    let matchPoints = 0;
+    
+    if (result === 'win')       matchPoints = Math.round(this.POINTS_WIN * rawMultiplier);
+    else if (result === 'loss') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+    else if (result === 'draw') matchPoints = Math.round(this.POINTS_LOSS * rawMultiplier);
+
+    this.saveMatchStat('Connect 4', result ? result : 'loss', matchPoints);
+
     if (result === 'win')  { this.handleRankedResult('Connect 4', 'win');  this.isWinModalOpen = true; }
     if (result === 'loss') { this.handleRankedResult('Connect 4', 'loss'); this.isLossModalOpen = true; }
     if (result === 'draw') { this.handleRankedResult('Connect 4', 'draw'); this.isDrawModalOpen = true; }
