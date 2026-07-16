@@ -57,8 +57,14 @@ migrate:
 	@echo "$(YELLOW)Esperando un momento para asegurar la conexión...$(RESET)"
 	@sleep 15
 	@echo "$(YELLOW)Ejecutando migraciones...$(RESET)"
-	docker exec -i transcendence_backend php artisan migrate:fresh --seed
-	docker exec -u root transcendence_backend chmod -R 777 storage bootstrap/cache
+	@if docker exec transcendence_backend php artisan migrate:status > /dev/null 2>&1; then \
+		echo "$(YELLOW)Base de datos ya existente. Aplicando migraciones pendientes...$(RESET)"; \
+		docker exec -i transcendence_backend php artisan migrate --force; \
+	else \
+		echo "$(YELLOW)Base de datos vacía. Realizando instalación inicial (Migrate + Seed)...$(RESET)"; \
+		docker exec -i transcendence_backend php artisan migrate:fresh --seed --force; \
+	fi
+	@docker exec -u root transcendence_backend chmod -R 777 storage bootstrap/cache
 
 # Instala dependencias de Composer y ajusta permisos
 install:
