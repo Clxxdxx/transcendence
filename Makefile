@@ -32,10 +32,12 @@ up:
 # Inicializa infraestructura ELK (índices, ILM policy, patrón Kibana)
 logs-init:
 	@echo "$(YELLOW)Inicializando infraestructura ELK...$(RESET)"
-	docker cp infra/logging/. transcendence_backend:/tmp/logging
+	docker exec transcendence_backend rm -rf /tmp/logging && docker exec transcendence_backend mkdir -p /tmp/logging
+	tar -cf - -C infra/logging . | docker exec -i transcendence_backend tar -xf - -C /tmp/logging --no-same-owner
 	docker exec transcendence_backend chmod +x /tmp/logging/create_resources.sh
 	docker exec -e ES_HOST=http://elasticsearch:9200 -e KIBANA_HOST=http://kibana:5601 \
 		-w /tmp/logging transcendence_backend sh /tmp/logging/create_resources.sh
+
 
 # Detiene los contenedores
 down:
