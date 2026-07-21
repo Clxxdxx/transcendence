@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-alpine
 
-RUN apk add --no-cache libpq-dev git zip unzip \
+RUN apk add --no-cache libpq-dev git zip unzip mysql-client \
     && docker-php-ext-install pdo pdo_pgsql pgsql pdo_mysql
 
 # Instalar Composer

@@ -15,7 +15,8 @@ class BackupRun extends Command
         $this->info('Starting backup...');
         $now = now()->format('Ymd_His');
         $backupPath = 'private/backups';
-        Storage::disk('local')->makeDirectory($backupPath);
+        $diskBackupPath = 'backups'; // relative to the 'local' disk root, which is already storage/app/private
+        Storage::disk('local')->makeDirectory($diskBackupPath);
         $archiveName = "backup_{$now}.tar.gz";
         $tmpDir = storage_path("app/{$backupPath}/tmp_{$now}");
         @mkdir($tmpDir, 0755, true);
@@ -34,6 +35,7 @@ class BackupRun extends Command
         }
 
         // If using MySQL, create a dump
+        $mysqlDumpFailed = false;
         try {
             $dbDefault = config('database.default');
             if ($dbDefault === 'mysql') {
@@ -49,24 +51,31 @@ class BackupRun extends Command
                 $mysqldump = trim(shell_exec('which mysqldump'));
                 if (!$mysqldump) {
                     $this->error('mysqldump not found in PATH. Skipping DB dump.');
+                    $mysqlDumpFailed = true;
                 } else {
-                    $parts = [escapeshellcmd($mysqldump)];
+                    $parts = [escapeshellcmd($mysqldump), '--skip-ssl'];
                     if ($host !== '') $parts[] = '-h ' . escapeshellarg($host);
                     if (!empty($port)) $parts[] = '-P ' . escapeshellarg($port);
                     if ($user !== '') $parts[] = '-u ' . escapeshellarg($user);
                     if ($pass !== '') $parts[] = '-p' . escapeshellarg($pass);
                     $parts[] = escapeshellarg($db);
-                    $cmd = implode(' ', $parts) . ' > ' . escapeshellarg($dumpFile) . ' 2>&1';
+                    $errFile = $tmpDir . '/mysqldump.err';
+                    // Keep stderr (deprecation warnings, etc.) out of the dump file, or it corrupts the SQL on restore.
+                    $cmd = implode(' ', $parts) . ' > ' . escapeshellarg($dumpFile) . ' 2>' . escapeshellarg($errFile);
                     exec($cmd, $out, $ret);
+                    $errOutput = file_exists($errFile) ? file_get_contents($errFile) : '';
+                    @unlink($errFile);
                     if ($ret === 0 && file_exists($dumpFile)) {
                         $this->info('DB dump created.');
                     } else {
-                        $this->error('mysqldump failed or returned non-zero. Output: ' . implode("\n", $out));
+                        $this->error('mysqldump failed or returned non-zero. Output: ' . $errOutput);
+                        $mysqlDumpFailed = true;
                     }
                 }
             }
         } catch (\Exception $e) {
             $this->error('Error while creating DB dump: ' . $e->getMessage());
+            $mysqlDumpFailed = true;
         }
 
         // Create archive
@@ -88,9 +97,9 @@ class BackupRun extends Command
 
         // Retention
         $retention = (int) $this->option('retention');
-        $files = Storage::disk('local')->files($backupPath);
+        $files = Storage::disk('local')->files($diskBackupPath);
         foreach ($files as $file) {
-            if (Str::startsWith($file, 'private/backups/')) {
+            if (Str::startsWith($file, 'backups/')) {
                 $basename = basename($file);
                 if (Str::startsWith($basename, 'backup_')) {
                     $timestamp = Storage::disk('local')->lastModified($file);
@@ -100,6 +109,11 @@ class BackupRun extends Command
                     }
                 }
             }
+        }
+
+        if ($mysqlDumpFailed) {
+            $this->error('Backup completed but the MySQL dump is missing or failed — archive does NOT contain the database.');
+            return 1;
         }
 
         return 0;

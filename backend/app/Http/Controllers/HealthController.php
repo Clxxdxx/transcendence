@@ -33,7 +33,7 @@ class HealthController extends Controller
 
         // Storage
         try {
-            $path = 'private/health_test.txt';
+            $path = 'health_test.txt';
             Storage::disk('local')->put($path, now()->toDateTimeString());
             $status['storage'] = Storage::disk('local')->exists($path) ? 'ok' : 'error';
             Storage::disk('local')->delete($path);

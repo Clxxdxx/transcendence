@@ -71,7 +71,7 @@ class BackupRestore extends Command
                     $db = $cfg['database'] ?? '';
 
                     $mysql = trim(shell_exec('which mysql')) ?: 'mysql';
-                    $parts = [escapeshellcmd($mysql)];
+                    $parts = [escapeshellcmd($mysql), '--skip-ssl'];
                     if ($host !== '') $parts[] = '-h ' . escapeshellarg($host);
                     if (!empty($port)) $parts[] = '-P ' . escapeshellarg($port);
                     if ($user !== '') $parts[] = '-u ' . escapeshellarg($user);
