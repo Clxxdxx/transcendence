@@ -49,6 +49,7 @@ export class Profile implements OnInit {
         this.name = user.name || '';
         this.nick = user.nick || '';
 
+        this.cdr.detectChanges();
         this.loadStats();
       },
       error: (err) => {
