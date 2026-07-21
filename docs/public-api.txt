@@ -1,0 +1,31 @@
+Ejecutar public api en terminal:
+    sin api key, debe fallar:
+        curl -k -i https://localhost:8443/api/v1/public/users
+
+    con api key, devuelve json:
+        curl -k -i -H "X-API-Key: secreto_transcendence_2026" https://localhost:8443/api/v1/public/users
+
+    crear un usuario:
+        curl -k -i -X POST \
+        -H "X-API-Key: secreto_transcendence_2026" \
+        -H "Content-Type: application/json" \
+        -d '{"name":"API Test User", "email":"apitest@example.com", "nick":"apitest", "password":"password123"}' \
+        https://localhost:8443/api/v1/public/users
+
+    obetener un usuario:
+        curl -k -i \
+        -H "X-API-Key: secreto_transcendence_2026" \
+        https://localhost:8443/api/v1/public/users/27
+        
+    actualizar un usuario:  
+        curl -k -i -X PUT \
+        -H "X-API-Key: secreto_transcendence_2026" \
+        -H "Content-Type: application/json" \
+        -d '{"name":"Claudio Modificado", "nick":"claudio_api"}' \
+        https://localhost:8443/api/v1/public/users/27
+    
+    eliminar un usuario:
+        curl -k -i -X DELETE \
+        -H "X-API-Key: secreto_transcendence_2026" \
+         https://localhost:8443/api/v1/public/users/28
+

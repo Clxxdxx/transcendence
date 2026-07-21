@@ -42,3 +42,14 @@ Route::post('/verify-code', [MailController::class, 'verifyCode']); //https//loc
 
 // Health check
 Route::get('/health', [HealthController::class, 'health']);
+
+//public api
+Route::middleware(['throttle:60,1', \App\Http\Middleware\ApiKeyMiddleware::class])
+    ->prefix('v1/public')
+    ->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::get('/users/{id_user}', [UserController::class, 'show']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    });
