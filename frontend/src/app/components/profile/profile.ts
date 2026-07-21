@@ -16,6 +16,8 @@ export class Profile implements OnInit {
   name: string = '';
   nick: string = '';
 
+  errorMessage = '';
+
   totalWins: number = 0;
   totalLosses: number = 0;
   gameStats: any[] = [];
@@ -95,15 +97,24 @@ export class Profile implements OnInit {
 
   saveChanges() {
     this.isSaving = true;
+    this.errorMessage = ''; 
+
     this.userService.updateProfile(this.userId, { name: this.name, nick: this.nick }).subscribe({
       next: (res) => {
         alert('¡Perfil actualizado con éxito!');
         this.isSaving = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error(err);
-        alert(err.error?.message || 'Error al actualizar el perfil');
+      error: (err: any) => {
+        if (err.status === 422 && err.error.errors) {
+          const errors = err.error.errors;
+          const firstKey = Object.keys(errors)[0];
+          this.errorMessage = errors[firstKey][0]; 
+          alert("Nick have been tacked.");
+        } else {
+          this.errorMessage = err.error?.message || 'Error al actualizar el perfil';
+        }
+
         this.isSaving = false;
         this.cdr.detectChanges();
       }
