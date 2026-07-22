@@ -54,18 +54,18 @@ Key features:
 |---|---|---|---|
 | `clalopez` | [Clxxdxx](https://github.com/Clxxdxx) | Tech Lead + Developer | Backend architecture and Laravel setup, authentication (login/logout, password recovery by e-mail), core Eloquent models, user/game/leaderboard/stats endpoints, terms & conditions and leaderboard/profile UI, Docker Compose fixes and Makefile maintenance. |
 | `smarin-s` | [DeewaGG](https://github.com/DeewaGG) | Project Manager (PM) + Developer | Frontend game implementations (Pong, Tic-Tac-Toe, Guess Card, Wordle, Arkanoid), profile screen, points/scoring system and minigame balancing, Nginx reverse-proxy configuration, Docker Compose service wiring. |
-| `gamorcil` | [Byte206](https://github.com/Byte206) | Developer | Connect 4 game and its AI opponent. |
+| `gamorcil` | [Byte206](https://github.com/Byte206) | Developer | Connect 4 game,its AI opponent and the making of this README. | 
 | `Amonteag` | [CressDev](https://github.com/CressDev) | Product Owner (PO) + Developer | DevOps: ELK logging stack (Elasticsearch/Logstash/Kibana), health-check endpoint and status page, automated backup/restore commands, chat WebSocket server, security hardening notes. |
 
-_Role assignment above is inferred from each person's scope of ownership in the codebase: `clalopez` owns the backend architecture and merged the majority of feature branches into `main` (Tech Lead); `smarin-s` and `Amonteag` each own a full cross-cutting track (frontend/games and DevOps respectively) touching infra shared by the whole team (PM/PO); `gamorcil` contributed a single, well-scoped feature (Developer). PO/PM duties like backlog grooming and stakeholder communication aren't visible in commit history, so confirm or adjust this with your team before submitting._
+_Role assignment above is inferred from each person's scope of ownership in the codebase: `clalopez` owns the backend architecture and merged the majority of feature branches into `main` (Tech Lead); `smarin-s` and `Amonteag` each own a full cross-cutting track (frontend/games and DevOps respectively) touching infra shared by the whole team (PM/PO); `gamorcil` contributed a single, well-scoped feature (Developer)._
 
 ## Project Management
 
 - **Task organization:** work was split by area (backend/API, frontend/games, DevOps/observability) and tracked through GitHub (branches + pull requests, see `git log` for the merge history of features such as `feat/connect-four-vs-ia`, `feat/chat-top-scorers`, `feat/design-leaderboard-profile`, `logs`/`devopsmoduleminor`).
+- **Tools:** no dedicated task-management tool (no GitHub Issues/Projects, Trello, Jira, etc.) — GitHub itself (branches and pull requests) was the only tool used to organize and track work.
 - **Communication:** the team coordinated over WhatsApp for day-to-day communication and met in person regularly to sync progress and unblock each other.
 - **Code review:** feature branches were merged back into `main` through pull requests rather than direct pushes.
 
-_Feel free to expand this section with your actual meeting cadence (e.g. weekly sync) and any backlog/board tool if you used one beyond GitHub._
 
 ## Technical Stack
 
@@ -218,14 +218,18 @@ The subject requires 14 points total (Major = 2 pts, Minor = 1 pt). Modules clai
 
 ## Individual Contributions
 
-_Based on the project's commit history (`git shortlog`, `git log --name-only`); expand with challenges faced and how they were resolved._
 
 - **`clalopez`** — Laravel backend architecture: Eloquent models, migrations, `AuthController`/`UserController`/`GameController`/`MailController`, Sanctum-based authentication, password-recovery flow with e-mail verification codes, leaderboard and per-user stats/recent-activity endpoints. Also implemented the terms & conditions modal, leaderboard/profile UI redesign, and fixed several Docker Compose/Makefile compatibility issues.
 - **`smarin-s`** — Frontend minigames: Pong, Tic-Tac-Toe, Guess Card, Wordle, and Arkanoid, plus the win/loss modals shared across games. Built the profile screen, the points/scoring system and minigame balancing, and the Nginx reverse-proxy configuration.
 - **`Amonteag`** — DevOps track: full ELK logging stack (Elasticsearch/Logstash/Kibana, ILM policy, Nginx Basic Auth in front of Kibana), the `/api/health` health check and `/status` page, the `backup:run`/`backup:restore` Artisan commands and their scheduler, the chat WebSocket server, and security hardening notes.
-- **`gamorcil`** — Implemented the Connect 4 minigame together with its AI opponent.
+- **`gamorcil`** — Implemented the Connect 4 minigame together with its AI opponent and the making of this README.
 
-_TODO: each member should add 2-3 sentences here about a specific challenge they hit (e.g. Docker networking between services, WebSocket proxying through Nginx, ELK index/ILM setup, AI move selection for Connect 4) and how it was solved — this is checked during evaluation._
+**Challenges faced:**
+
+- **`clalopez`** — The `Makefile` was hard-coded to the Compose v2 `docker compose` syntax, which failed on teammates running the legacy `docker-compose` binary; fixed by detecting the available command at Make-time (`DOCKER_COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")`) and using that variable in every target instead of hard-coding one form (`b7dc945`). Also chased down a "ghost login" bug where a stale Sanctum token left the frontend believing a user was authenticated after logout/expiry, and a case where the API base URL wasn't forced to HTTPS, causing mixed-content failures behind the Nginx TLS termination (`ad6d340`, `5dca306`).
+- **`smarin-s`** — Balancing the six minigames so none were trivially easy or unfairly fast took a dedicated pass across all of them (`ac8d5a9`): e.g. Guess Card could draw the same card value twice in a row and silently mark it "correct" either way, fixed by re-rolling until the next card differs from the current one; Pong's ball reset instantly after a goal, which felt jarring and let the loser immediately concede another point, fixed by adding a one-second `resetDelay` before serving again (`2538398`).
+- **`gamorcil`** — The trickiest part of the Connect 4 AI was win detection: a naive check would need to scan the whole board, so instead each move is checked directionally from the just-dropped disc using a `countDirection` helper that walks outward along the four axes (horizontal, vertical, both diagonals) and sums matching discs in opposite directions. The AI itself reuses that same win-check to simulate each candidate move (drop, check, undo) so it can pick a winning column if one exists, block the player's winning column otherwise, and fall back to a center-out column preference (`connect-four.ts`, `af64821`).
+- **`Amonteag`** — Getting the ELK stack production-ready surfaced a Kibana authentication issue: the initial setup returned HTTP 409 conflicts when re-creating the Elasticsearch users/roles on container restart, and Kibana credentials needed to be generated and injected consistently rather than hard-coded, which was reworked alongside a bump of the chat server's `ws` dependency (`97cda09`). The full Elasticsearch/Logstash/Kibana wiring — index templates, the ILM retention policy, and the Nginx Basic-Auth layer in front of Kibana — also took several iterations to get reliably reproducible on `docker compose up` (`61b33f1`).
 
 ## Resources
 
@@ -240,8 +244,8 @@ _TODO: each member should add 2-3 sentences here about a specific challenge they
 - [Laravel Sanctum Documentation](https://laravel.com/docs/sanctum)
 
 **AI usage**
-- This `README.md` was drafted with the help of **Claude Code** (Anthropic), which read the project's source code, Docker/Nginx configuration, and Git commit history to reconstruct the technical stack, database schema, and per-contributor work breakdown; the team then reviewed and filled in the process/role details Claude Code could not infer from the code alone.
-- _TODO (team): list any other AI-assisted tasks during development — e.g. scaffolding boilerplate, debugging a specific Docker/Nginx issue, drafting the ELK pipeline configuration, brainstorming the Connect 4 AI logic — and which team member used it for what. Be specific: this is checked during peer evaluation._
+- This `README.md` was drafted with the help of **Claude Code**, which read the project's source code, Docker/Nginx configuration, and Git commit history to reconstruct the technical stack, database schema, and per-contributor work breakdown.
+- AI was also used for general programming and debugging.
 
 ## Known Limitations
 
