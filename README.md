@@ -194,6 +194,7 @@ cd backend && php artisan test   # PHPUnit backend tests
 | Automated backups | Scheduled `php artisan backup:run` (every 6h) with `backup:restore` | `Amonteag` |
 | Centralized logging (ELK) | Structured Laravel logs shipped to Elasticsearch via Logstash, visualized in Kibana | `Amonteag` |
 | Terms of Service / Privacy Policy | Modal accessible from the footer on every page | `clalopez` |
+| Public API | API-key-secured, rate-limited REST endpoints for external CRUD access to users | `clalopez` |
 
 ## Modules
 
@@ -210,7 +211,9 @@ The subject requires 14 points total (Major = 2 pts, Minor = 1 pt). Modules clai
 | Add another game with user history | Games & UX | Major | 2 | Five further games (Tic-Tac-Toe, Connect 4, Wordle, Guess Card, Arkanoid) beyond the first, all recording stats through the same `games`/`stats` schema. |
 | Log management infrastructure (ELK) | DevOps | Major | 2 | Elasticsearch + Logstash + Kibana 8.10.2, ILM retention policy, Nginx Basic-Auth-protected access to Kibana. |
 | Health check + status page + automated backups | DevOps | Minor | 1 | `/api/health`, `/status`, `php artisan backup:run`/`backup:restore`, scheduler container running every 6h. |
-| **Total** | | | **15** | |
+| Public API | Web | Major | 2 | Secured, rate-limited REST API under `/api/v1/public` (`ApiKeyMiddleware`, `X-API-Key` header, `throttle:60,1`), with 5 CRUD endpoints on users (`GET /users`, `POST /users`, `GET /users/{id}`, `PUT /users/{id}`, `DELETE /users/{id}`) and usage documentation in `docs/public-api.txt`. |
+| Support for additional browsers | Accessibility & Internationalization | Minor | 1 | Full functional testing on Firefox and Edge in addition to the mandatory Chrome baseline; consistent UI/UX across all three with no browser-specific issues found. |
+| **Total** | | | **18** | |
 
 **Known scope limits, for honesty during evaluation:**
 - The "Add another game" module here covers additional games and per-game stats, but there is no dedicated matchmaking queue — games are launched directly from the game selection screen and played locally (same device) or against the AI.
@@ -219,7 +222,7 @@ The subject requires 14 points total (Major = 2 pts, Minor = 1 pt). Modules clai
 ## Individual Contributions
 
 
-- **`clalopez`** — Laravel backend architecture: Eloquent models, migrations, `AuthController`/`UserController`/`GameController`/`MailController`, Sanctum-based authentication, password-recovery flow with e-mail verification codes, leaderboard and per-user stats/recent-activity endpoints. Also implemented the terms & conditions modal, leaderboard/profile UI redesign, and fixed several Docker Compose/Makefile compatibility issues.
+- **`clalopez`** — Laravel backend architecture: Eloquent models, migrations, `AuthController`/`UserController`/`GameController`/`MailController`, Sanctum-based authentication, password-recovery flow with e-mail verification codes, leaderboard and per-user stats/recent-activity endpoints. Also implemented the terms & conditions modal, leaderboard/profile UI redesign, the secured/rate-limited public API, and fixed several Docker Compose/Makefile compatibility issues.
 - **`smarin-s`** — Frontend minigames: Pong, Tic-Tac-Toe, Guess Card, Wordle, and Arkanoid, plus the win/loss modals shared across games. Built the profile screen, the points/scoring system and minigame balancing, and the Nginx reverse-proxy configuration.
 - **`Amonteag`** — DevOps track: full ELK logging stack (Elasticsearch/Logstash/Kibana, ILM policy, Nginx Basic Auth in front of Kibana), the `/api/health` health check and `/status` page, the `backup:run`/`backup:restore` Artisan commands and their scheduler, the chat WebSocket server, and security hardening notes.
 - **`gamorcil`** — Implemented the Connect 4 minigame together with its AI opponent and the making of this README.
