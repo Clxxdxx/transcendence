@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-const WORDS = ['GATOS', 'PATOS', 'JUEGO', 'PIZZA', 'PLAYA', 'RATON', 'CARRO', 'VERDE'];
+const WORDS = ['USERS', 'GAMES', 'POINT', 'SCORE', 'LOGIN', 'EMAIL', 'NICKN', 'ADMIN', 'TOKEN', 'BOARD'];
 
 @Component({
   selector: 'app-wordle',

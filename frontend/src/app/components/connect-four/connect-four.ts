@@ -68,15 +68,15 @@ export class ConnectFour {
     const valid = this.validColumns();
     if (valid.length === 0) return -1;
 
-    // 1. Gana si puede
+    // 1. Win if possible
     const winCol = this.findWinningColumn('Y', valid);
     if (winCol !== -1) return winCol;
 
-    // 2. Bloquea al jugador si puede ganar
+    // 2. Block the player if they can win
     const blockCol = this.findWinningColumn('R', valid);
     if (blockCol !== -1) return blockCol;
 
-    // 3. Prefiere las columnas centrales
+    // 3. Prefer center columns
     return CENTER_ORDER.find(c => valid.includes(c)) ?? valid[0];
   }
 

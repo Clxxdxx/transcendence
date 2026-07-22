@@ -28,7 +28,7 @@ export class Navbar {
 
     onLeaderboard() {
       if (!this.auth.isLoggedIn()) {
-        console.log('Usuario no logueado. Solicitando inicio de sesión...');
+        console.log('User not logged in. Requesting login...');
         this.loginRequired.emit();
         return;
       }
@@ -37,7 +37,7 @@ export class Navbar {
 
     onProfile() {
       if (!this.auth.isLoggedIn()) {
-        console.log('Usuario no logueado. Solicitando inicio de sesión...');
+        console.log('User not logged in. Requesting login...');
         this.loginRequired.emit();
         return;
       }

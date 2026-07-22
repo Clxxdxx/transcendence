@@ -16,7 +16,7 @@
            [class.rounded-r-md]="message.nick === currentUserNick">
         
         <span [class]="message.nick === currentUserNick ? 'text-cyan-400 text-[11px] font-bold tracking-wide' : 'text-indigo-400 text-[11px] font-bold tracking-wide'">
-          {{ message.nick === currentUserNick ? message.nick + ' (Tú)' : message.nick }}
+          {{ message.nick === currentUserNick ? message.nick + ' (You)' : message.nick }}
         </span>
 
         <p [class]="message.nick === currentUserNick ? 'text-white text-[11px] mt-0.5 font-medium' : 'text-slate-300 text-[11px] mt-0.5'">

@@ -37,10 +37,10 @@ export class SendCodeModal {
       },
       error: (err: any) => {
         if (err.status === 422) {
-          this.errorMessage = "Este correo no está registrado.";
+          this.errorMessage = "This email is not registered.";
           console.log('error');
         } else {
-            this.errorMessage = 'Error al enviar el código.';
+            this.errorMessage = 'Error trying to send the code.';
         }
         this.cdr.detectChanges();
       }

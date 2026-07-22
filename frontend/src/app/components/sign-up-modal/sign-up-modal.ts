@@ -22,12 +22,12 @@ export class SignUpModal {
   constructor(private signUp: SignUp, private cdr: ChangeDetectorRef) {}
 
   doSignUp() {
-    console.log('Intentando crear usuario con:', this.email);
+    console.log('Trying to sign up:', this.email);
 
     this.signUp.signUp(this.name, this.email, this.nick, this.password).subscribe({
       next: (res: any) => {
-        console.log('¡Éxito! Respuesta del servidor:', res);
-        alert("Cuenta creada correctamente!\nInicia sesión ahora");
+        console.log('Success! Server response:', res);
+        alert("Account created successfully!\nPlease log in now");
         this.signUpSuccess.emit();
         this.close.emit();
       },
@@ -38,7 +38,7 @@ export class SignUpModal {
           const firstKey = Object.keys(errors)[0];
           this.errorMessage = errors[firstKey][0]; 
         } else {
-          this.errorMessage = 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+          this.errorMessage = 'An unexpected error occurred. Please try again.';
         }
         this.cdr.detectChanges();
       }

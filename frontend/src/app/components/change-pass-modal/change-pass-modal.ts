@@ -24,7 +24,7 @@ export class ChangePassModal {
 
   onConfirm() {
     this.errorMessage = '';
-    console.log("Enviando a verificar -> Email:", this.email, "Código:", this.code);
+    console.log("Sending verification code -> Email:", this.email, "Code:", this.code);
     this.c_email.verifyCode(this.email, this.code).subscribe({
       next: () => {
         
@@ -34,22 +34,22 @@ export class ChangePassModal {
 
             this.userService.updatePassword(userId, this.newPassword).subscribe({
               next: () => {
-                alert("Contraseña actualizada con éxito. Ya puedes iniciar sesión.");
+                alert("Password updated successfully. You can now log in.");
                 this.close.emit();
               },
               error: () => {
-                this.errorMessage = "No se pudo guardar la nueva contraseña.";
+                this.errorMessage = "Could not save the new password.";
               }
             });
           },
           error: (err: any) => {
-            this.errorMessage = "El correo electrónico no está registrado.";
+            this.errorMessage = "The email address is not registered.";
           }
         });
 
       },
       error: (err: any) => {
-        this.errorMessage = "El código de verificación es incorrecto o ha expirado.";
+        this.errorMessage = "The verification code is incorrect or has expired.";
       }
     });
   }

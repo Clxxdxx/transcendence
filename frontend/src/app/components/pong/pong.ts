@@ -76,7 +76,7 @@ export class Pong implements AfterViewInit, OnDestroy {
   };
 
   private update(dt: number) {
-    // Paddle jugador
+    // Player paddle
     if ((this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']) && this.player.y > 0)
       this.player.y -= this.SPEED * dt;
     if ((this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']) && this.player.y + this.PH < this.H)
@@ -89,22 +89,22 @@ export class Pong implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Paddle IA — mismo speed que el jugador, sigue el centro de la bola
+    // AI paddle — same speed as the player, follows the ball's center
     const aiMid = this.ai.y + this.PH / 2;
     if (aiMid < this.ball.y - 4 && this.ai.y + this.PH < this.H)
       this.ai.y += this.SPEED * dt;
     else if (aiMid > this.ball.y + 4 && this.ai.y > 0)
       this.ai.y -= this.SPEED * dt;
 
-    // Mover bola
+    // Move ball
     this.ball.x += this.ball.vx * dt;
     this.ball.y += this.ball.vy * dt;
 
-    // Rebote paredes top/bottom
+    // Top/bottom wall bounce
     if (this.ball.y <= 0) { this.ball.y = 0; this.ball.vy *= -1; }
     if (this.ball.y + this.BH >= this.H) { this.ball.y = this.H - this.BH; this.ball.vy *= -1; }
 
-    // Rebote paddle jugador (solo cuando la bola va hacia la izquierda)
+    // Player paddle bounce (only when the ball is moving left)
     if (this.ball.vx < 0 &&
         this.ball.x <= this.player.x + this.PW &&
         this.ball.x >= this.player.x &&
@@ -116,7 +116,7 @@ export class Pong implements AfterViewInit, OnDestroy {
       this.ball.vy = Math.max(-this.MAX_BALL_VY, Math.min(this.MAX_BALL_VY, this.ball.vy));
     }
 
-    // Rebote paddle IA (solo cuando la bola va hacia la derecha)
+    // AI paddle bounce (only when the ball is moving right)
     if (this.ball.vx > 0 &&
         this.ball.x + this.BW >= this.ai.x &&
         this.ball.x <= this.ai.x + this.PW &&
@@ -128,7 +128,7 @@ export class Pong implements AfterViewInit, OnDestroy {
       this.ball.vy = Math.max(-this.MAX_BALL_VY, Math.min(this.MAX_BALL_VY, this.ball.vy));
     }
 
-    // Gol izquierda → punto para la IA
+    // Left goal → point for the AI
     if (this.ball.x + this.BW < 0) {
       this.aiScore++;
       if (this.aiScore >= this.WIN_SCORE) {
@@ -141,7 +141,7 @@ export class Pong implements AfterViewInit, OnDestroy {
       this.resetDelay = 1;
     }
 
-    // Gol derecha → punto para el jugador
+    // Right goal → point for the player
     if (this.ball.x > this.W) {
       this.playerScore++;
       if (this.playerScore >= this.WIN_SCORE) {
@@ -161,7 +161,7 @@ export class Pong implements AfterViewInit, OnDestroy {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, this.W, this.H);
 
-    // Línea central punteada
+    // Dashed center line
     ctx.setLineDash([10, 10]);
     ctx.strokeStyle = '#444';
     ctx.lineWidth = 2;
@@ -171,13 +171,13 @@ export class Pong implements AfterViewInit, OnDestroy {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Paddles y bola
+    // Paddles and ball
     ctx.fillStyle = '#fff';
     ctx.fillRect(this.player.x, this.player.y, this.PW, this.PH);
     ctx.fillRect(this.ai.x, this.ai.y, this.PW, this.PH);
     ctx.fillRect(this.ball.x, this.ball.y, this.BW, this.BH);
 
-    // Marcador
+    // Scoreboard
     ctx.font = '48px monospace';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#fff';

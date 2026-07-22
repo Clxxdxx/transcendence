@@ -17,14 +17,14 @@ export class Leaderboard implements OnInit {
   ngOnInit(): void {
     this.userService.getLeaderboard().subscribe({
       next: (data) => {
-        console.log('Datos recibidos del backend:', data);
+        console.log('Backend data received:', data);
         this.players = data;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar el leaderboard:', err);
-        err.resp
+        console.error('Error loading leaderboard:', err);
+        err.response;
         this.isLoading = false;
       }
     });

@@ -6,7 +6,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401 || (err.status === 404 && req.url.includes('/users'))) {
-        console.warn('⚠️ ¡Sesión fantasma detectada! Limpiando datos...');
+        console.warn('⚠️ Ghost session detected! Clearing data...');
         localStorage.clear();
         window.location.reload();
       }

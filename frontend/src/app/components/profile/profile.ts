@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, EventEmitter, Output } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../services/user';
-import { forkJoin } from 'rxjs'; // 1. Importamos forkJoin para controlar el flujo asíncrono
+import { forkJoin } from 'rxjs'; // 1. Import forkJoin to control the async flow
 
 @Component({
   selector: 'app-profile',
@@ -42,7 +42,7 @@ export class Profile implements OnInit {
   constructor(private userService: User, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    // 1. Obtenemos el usuario autenticado
+    // 1. Get the authenticated user
     this.userService.getAuthUser().subscribe({
       next: (user) => {
         this.userId = user.id_user;
@@ -53,7 +53,7 @@ export class Profile implements OnInit {
         this.loadStats();
       },
       error: (err) => {
-        console.error('Error al obtener usuario autenticado:', err);
+        console.error('Error trying to get authenticated user:', err);
       }
     });
   }
@@ -66,7 +66,7 @@ export class Profile implements OnInit {
       recent: this.userService.getRecentActivity(this.userId)
     }).subscribe({
       next: ({ allGames, userStats, totals, recent }) => {
-        // 1. Totales
+        // 1. Totals
         this.totalWins = Number(totals.TotalWins || 0);
         this.totalLosses = Number(totals.TotalLosses || 0);
 
@@ -102,7 +102,7 @@ export class Profile implements OnInit {
 
     this.userService.updateProfile(this.userId, { name: this.name, nick: this.nick }).subscribe({
       next: (res) => {
-        alert('¡Perfil actualizado con éxito!');
+        alert('Profile updated successfully!');
         this.isSaving = false;
         this.cdr.detectChanges();
       },
@@ -113,7 +113,7 @@ export class Profile implements OnInit {
           this.errorMessage = errors[firstKey][0]; 
           alert("Nick have been tacked.");
         } else {
-          this.errorMessage = err.error?.message || 'Error al actualizar el perfil';
+          this.errorMessage = err.error?.message || 'Error trying to update profile';
         }
 
         this.isSaving = false;
@@ -123,17 +123,17 @@ export class Profile implements OnInit {
   }
 
   onDeleteAccount() {
-    const confirmFirst = confirm('⚠️ ¿Estás COMPLETAMENTE seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.');
+    const confirmFirst = confirm('Are you COMPLETELY sure you want to delete your account? This action cannot be undone.');
     if (confirmFirst) {
-      const confirmSecond = confirm('🔥 Perderás todos tus puntos, estadísticas y victorias en la clasificación. ¿Proceder de todos modos?');
+      const confirmSecond = confirm('You will lose all your points, statistics, and wins in the leaderboard. Proceed anyway?');
       if (confirmSecond) {
         this.userService.deleteAccount(this.userId).subscribe({
           next: () => {
-            alert('Tu cuenta ha sido eliminada. Gracias por jugar.');
+            alert('Your account has been deleted. Thank you for playing.');
             localStorage.removeItem('auth_token');
             window.location.reload();
           },
-          error: (err) => console.error('Error al borrar la cuenta', err)
+          error: (err) => console.error('Error deleting account', err)
         });
       }
     }

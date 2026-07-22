@@ -26,17 +26,17 @@ export class ChatService {
         this.messages.push(message);
         this.messageReceived$.next();
       } catch (e) {
-        console.error('Error al parsear mensaje:', e);
+        console.error('Error parsing message:', e);
       }
     };
 
     this.socket.onclose = () => {
-      console.log('bSocket cerrado');
+      console.log('Socket closed');
     };
   }
 
   sendMessage(text: string): void {
-    const userNick = localStorage.getItem('nick') || 'Anónimo';
+    const userNick = localStorage.getItem('nick') || 'Anonymous';
     const messagePayload = { nick: userNick, text: text };
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
@@ -47,7 +47,7 @@ export class ChatService {
   disconnect(): void {
     this.cleanupSocket();
     this.messages = []; 
-    console.log('socket destruido');
+    console.log('socket destroyed');
   }
 
 

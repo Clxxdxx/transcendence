@@ -3,9 +3,9 @@
     <button
       (click)="exit()"
       class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
-      ← Volver
+      ← Back
     </button>
-    <span class="text-gray-400 text-sm">Ronda {{ round }} / {{ rounds }} — Aciertos {{ score }}</span>
+    <span class="text-gray-400 text-sm">Round {{ round }} / {{ rounds }} — Hits {{ score }}</span>
   </div>
 
   <div class="w-24 h-32 flex items-center justify-center text-4xl font-bold
@@ -17,12 +17,12 @@
     <button
       (click)="guess(false)"
       class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-800 to-indigo-800 border border-blue-500 text-cyan-200 font-semibold hover:brightness-125 transition-all cursor-pointer">
-      Menor
+      Lower
     </button>
     <button
       (click)="guess(true)"
       class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-cyan-100 font-semibold hover:brightness-110 transition-all cursor-pointer">
-      Mayor
+      Higher
     </button>
   </div>
 </div>

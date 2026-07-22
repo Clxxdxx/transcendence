@@ -3,12 +3,12 @@
     <button
       (click)="exit()"
       class="text-cyan-300 hover:text-white transition-colors text-sm cursor-pointer">
-      ← Volver
+      ← Back
     </button>
-    <span class="text-gray-400 text-sm">Tú eres X — Mejor de 5</span>
+    <span class="text-gray-400 text-sm">You are X — Best of 5</span>
   </div>
 
-  <span class="text-cyan-200 text-lg font-semibold">Tú {{ playerWins }} - {{ aiWins }} IA</span>
+  <span class="text-cyan-200 text-lg font-semibold">You {{ playerWins }} - {{ aiWins }} AI</span>
 
   <div class="grid grid-cols-3 gap-2">
     @for (cell of board; track $index) {

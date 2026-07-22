@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core'; // 1. Importamos ChangeDetectorRef
+import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core'; // 1. Import ChangeDetectorRef
 import { User } from '../../services/user';
 import { DecimalPipe } from '@angular/common';
 

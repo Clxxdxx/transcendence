@@ -22,11 +22,11 @@ export class AuthModal {
   constructor(private auth: Auth, private cdr: ChangeDetectorRef) {}
 
   doLogin() {
-    console.log('Intentando loguear con:', this.email);
+    console.log('Trying to log in with:', this.email);
 
     this.auth.login(this.email, this.password).subscribe({
       next: (res: any) => {
-        console.log('¡Éxito! Respuesta del servidor:', res);
+        console.log('Success! Server response:', res);
         this.auth.setToken(res.access_token);
         this.auth.setEmail(res.user.email);
         this.auth.setId(res.user.id_user);

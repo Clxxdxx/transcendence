@@ -50,18 +50,18 @@ export class TicTacToe {
       return empty[Math.floor(Math.random() * empty.length)];
     }
 
-    // 1. Gana si puede
+    // 1. Win if possible
     const winMove = this.findWinningMove('O', empty);
     if (winMove !== -1) return winMove;
 
-    // 2. Bloquea al jugador si puede ganar
+    // 2. Block the player if they can win
     const blockMove = this.findWinningMove('X', empty);
     if (blockMove !== -1) return blockMove;
 
-    // 3. Prefiere el centro
+    // 3. Prefer the center
     if (empty.includes(4)) return 4;
 
-    // 4. Prefiere una esquina
+    // 4. Prefer a corner
     const corners = [0, 2, 6, 8].filter(i => empty.includes(i));
     if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
 

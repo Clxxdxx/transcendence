@@ -85,16 +85,16 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
     if ((this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) && this.paddleX + this.PW < this.W)
       this.paddleX += this.SPEED * dt;
 
-    // Bola
+    // Ball
     this.ball.x += this.ball.vx * dt;
     this.ball.y += this.ball.vy * dt;
 
-    // Rebote paredes
+    // Wall bounce
     if (this.ball.x - this.BALL_R <= 0) { this.ball.x = this.BALL_R; this.ball.vx *= -1; }
     if (this.ball.x + this.BALL_R >= this.W) { this.ball.x = this.W - this.BALL_R; this.ball.vx *= -1; }
     if (this.ball.y - this.BALL_R <= 0) { this.ball.y = this.BALL_R; this.ball.vy *= -1; }
 
-    // Rebote paddle
+    // Paddle bounce
     const paddleY = this.H - 30;
     if (this.ball.vy > 0 &&
         this.ball.y + this.BALL_R >= paddleY &&
@@ -107,7 +107,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
       this.ball.vx = Math.max(-this.MAX_BALL_VX, Math.min(this.MAX_BALL_VX, this.ball.vx));
     }
 
-    // Colisión con ladrillos
+    // Brick collision
     outer: for (let r = 0; r < this.ROWS; r++) {
       for (let c = 0; c < this.COLS; c++) {
         if (!this.bricks[r][c]) continue;
@@ -122,7 +122,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Victoria
+    // Victory
     if (this.bricks.every(row => row.every(b => !b))) {
       cancelAnimationFrame(this.animationId);
       this.close.emit('win');
@@ -130,7 +130,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Bola perdida
+    // Ball lost
     if (this.ball.y - this.BALL_R > this.H) {
       this.lives--;
       if (this.lives <= 0) {
@@ -169,7 +169,7 @@ export class Arkanoid implements AfterViewInit, OnDestroy {
 
     ctx.font = '16px monospace';
     ctx.textAlign = 'left';
-    ctx.fillText(`Vidas: ${this.lives}`, 10, 20);
+    ctx.fillText(`Lives: ${this.lives}`, 10, 20);
   }
 
   exit() {

@@ -254,7 +254,7 @@ export class App implements OnInit {
       if (!this.currentUserId) return; 
 
       this.userService.recordMatchResult(this.currentUserId, gameTitle, result, pointsScored).subscribe({
-        error: err => console.error(`Error al guardar la estadística de ${gameTitle}`, err)
+        error: err => console.error(`Error saving match stats for ${gameTitle}`, err)
       });
     }
 

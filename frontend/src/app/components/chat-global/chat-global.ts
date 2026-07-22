@@ -23,7 +23,7 @@ export class ChatGlobal implements OnInit, OnDestroy {
   constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.currentUserNick = localStorage.getItem('nick') || 'Anónimo';
+    this.currentUserNick = localStorage.getItem('nick') || 'Anonymous';
 
     this.chatService.connect();
     
