@@ -21,17 +21,17 @@ secrets/kibana_htpasswd:
 	@KIBANA_USER=$$(grep '^KIBANA_USER=' backend/.env | cut -d= -f2); \
 	KIBANA_PASS=$$(grep '^KIBANA_PASS=' backend/.env | cut -d= -f2); \
 	docker run --rm httpd:alpine htpasswd -nb "$$KIBANA_USER" "$$KIBANA_PASS" > secrets/kibana_htpasswd
-	@echo "$(GREEN)Credenciales de Kibana generadas desde .env. Acceso: https://localhost/kibana/$(RESET)"
+	@echo "$(GREEN)Kibana's credentials generated from .env. Acceso: https://localhost/kibana/$(RESET)"
 
 # Levanta los contenedores en segundo plano y construye si es necesario
 up:
-	@echo "$(GREEN)Levantando servicios de $(NAME)...$(RESET)"
+	@echo "$(GREEN)Starting services for $(NAME)...$(RESET)"
 	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml up -d --build --wait
 # cambiado para que sea adaptable a todas las versiones, claudio.
 
 # Inicializa infraestructura ELK (índices, ILM policy, patrón Kibana)
 logs-init:
-	@echo "$(YELLOW)Inicializando infraestructura ELK...$(RESET)"
+	@echo "$(YELLOW)Initializing ELK infrastructure...$(RESET)"
 	docker exec transcendence_backend rm -rf /tmp/logging && docker exec transcendence_backend mkdir -p /tmp/logging
 	tar -cf - -C infra/logging . | docker exec -i transcendence_backend tar -xf - -C /tmp/logging --no-same-owner
 	docker exec transcendence_backend chmod +x /tmp/logging/create_resources.sh
@@ -41,29 +41,38 @@ logs-init:
 
 # Detiene los contenedores
 down:
-	@echo "$(RED)Deteniendo servicios...$(RESET)"
+	@echo "$(RED)Stopping services...$(RESET)"
 	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml down
 	@rm -f secrets/kibana_htpasswd
 
 
 # Detiene y borra contenedores, volúmenes y redes huérfanas
 clean:
-	@echo "$(RED)Limpiando contenedores y volúmenes...$(RESET)"
+	@echo "$(RED) Cleaning containers, volumes and networks...$(RESET)"
 	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml down -v --remove-orphans || true
+	docker network prune -f || true
+	@rm -f secrets/kibana_htpasswd
+
+
+# Borra TODO lo relacionado con el proyecto: contenedores, volúmenes, redes
+# e imágenes (construidas y descargadas), como si nunca se hubiera levantado
+fclean:
+	$(DOCKER_COMPOSE) $(ENV_FILE) -f docker-compose.yml -f infra/logging/docker-compose.prod.yml down -v --rmi all --remove-orphans || true
+	@docker rmi -f httpd:alpine 2>/dev/null || true
 	docker network prune -f || true
 	@rm -f secrets/kibana_htpasswd
 
 
 # Ejecuta las migraciones
 migrate:
-	@echo "$(YELLOW)Esperando un momento para asegurar la conexión...$(RESET)"
+	@echo "$(YELLOW)Waiting a moment to ensure connection...$(RESET)"
 	@sleep 15
-	@echo "$(YELLOW)Ejecutando migraciones...$(RESET)"
+	@echo "$(YELLOW)Running migrations...$(RESET)"
 	@if docker exec transcendence_backend php artisan migrate:status > /dev/null 2>&1; then \
-		echo "$(YELLOW)Base de datos ya existente. Aplicando migraciones pendientes...$(RESET)"; \
+		echo "$(YELLOW)Database already exists. Applying pending migrations...$(RESET)"; \
 		docker exec -i transcendence_backend php artisan migrate --force; \
 	else \
-		echo "$(YELLOW)Base de datos vacía. Realizando instalación inicial (Migrate + Seed)...$(RESET)"; \
+		echo "$(YELLOW)Database is empty. Performing initial setup (Migrate + Seed)...$(RESET)"; \
 		docker exec -i transcendence_backend php artisan migrate:fresh --seed --force; \
 	fi
 	@docker exec -u root transcendence_backend chmod -R 777 storage bootstrap/cache
@@ -90,4 +99,4 @@ shell-front:
 ps:
 	$(DOCKER_COMPOSE) $(ENV_FILE) ps
 
-.PHONY: all up down clean migrate install logs logs-init shell-back shell-front ps
+.PHONY: all up down clean fclean migrate install logs logs-init shell-back shell-front ps
